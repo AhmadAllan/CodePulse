@@ -12,6 +12,7 @@ productivity.
 This is a graduation project for Software Engineering from Al-Balqa` Applied University
 by whom the project:
 **Ahmad Abed Ibrahim Allan** [GitHub Pages](https://github.com/AhmadAllan)
+
 **Jaafar Abdul-Majid Muflih Al-Wahsh**
 
 ## Requirements 
