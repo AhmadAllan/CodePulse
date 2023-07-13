@@ -1,5 +1,6 @@
-**Project Idea: Online Code Collaboration Platform**
-**Name: CodePulse**
+**Project Idea:** Online Code Collaboration Platform
+
+**Name:** __CodePulse__
 
 **Description:** Develop a web-based code collaboration platform that allows developers to work
 together on coding projects in real-time. The platform should provide features for code editing,
