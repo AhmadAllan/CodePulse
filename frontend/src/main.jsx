@@ -18,6 +18,7 @@ import Projects from "./components/Projects";
 import CodeEditor from "./components/CodeEditor";
 import VersionControl from "./components/VersionControl";
 import ChatPage from "./components/ChatPage";
+import CodeReview from "./components/CodeReview";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -30,6 +31,7 @@ const router = createBrowserRouter(
       <Route  path="/codeEditor" element={<CodeEditor />}/>
       <Route  path="/versionControl" element={<VersionControl />}/>
       <Route  path="/chat" element={<ChatPage />}/>
+      <Route  path="/codeReview" element={<CodeReview />}/>
     </Route>
   )
 );
