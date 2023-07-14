@@ -4,70 +4,34 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
 const VersionControl = () => {
   const [projects] = useState([
-    {
-      id: 1,
-      name: 'Project A',
-      branches: ['main', 'feature-branch'],
-      pulls: [
-        { id: 1, title: 'Pull 1', author: 'Author A', date: '2022-08-01', file: 'path/to/file1' },
-        { id: 2, title: 'Pull 2', author: 'Author B', date: '2022-08-05', file: 'path/to/file2' },
-      ],
-      commits: [
-        { id: 1, message: 'Initial commit', author: 'Author A', date: '2022-08-01' },
-        { id: 2, message: 'Fix bug #123', author: 'Author B', date: '2022-08-05' },
-      ],
-    },
-    {
-      id: 2,
-      name: 'Project B',
-      branches: ['main', 'dev', 'bug-fix'],
-      pulls: [
-        { id: 3, title: 'Pull 3', author: 'Author C', date: '2022-08-10', file: 'path/to/file3' },
-        { id: 4, title: 'Pull 4', author: 'Author D', date: '2022-08-15', file: 'path/to/file4' },
-      ],
-      commits: [
-        { id: 3, message: 'Add new feature', author: 'Author C', date: '2022-08-10' },
-        { id: 4, message: 'Refactor code', author: 'Author D', date: '2022-08-15' },
-      ],
-    },
-    {
-      id: 3,
-      name: 'Project C',
-      branches: ['main'],
-      pulls: [
-        { id: 5, title: 'Pull 5', author: 'Author E', date: '2022-08-20', file: 'path/to/file5' },
-      ],
-      commits: [
-        { id: 5, message: 'Fix styling issues', author: 'Author E', date: '2022-08-20' },
-      ],
-    },
+    // Array of projects with their branches, pulls, and commits
   ]);
 
-  const [selectedProjectId, setSelectedProjectId] = useState(1);
-  const [expandedPulls, setExpandedPulls] = useState([]);
-  const [expandedCommits, setExpandedCommits] = useState([]);
+  const [selectedProjectId, setSelectedProjectId] = useState(1); // State to track the selected project
+  const [expandedPulls, setExpandedPulls] = useState([]); // State to track expanded pulls
+  const [expandedCommits, setExpandedCommits] = useState([]); // State to track expanded commits
 
   const handleProjectChange = (projectId) => {
-    setSelectedProjectId(projectId);
+    setSelectedProjectId(projectId); // Update the selected project
   };
 
   const handlePullToggle = (pullId) => {
     if (expandedPulls.includes(pullId)) {
-      setExpandedPulls(expandedPulls.filter((id) => id !== pullId));
+      setExpandedPulls(expandedPulls.filter((id) => id !== pullId)); // Collapse the pull if it is already expanded
     } else {
-      setExpandedPulls([...expandedPulls, pullId]);
+      setExpandedPulls([...expandedPulls, pullId]); // Expand the pull if it is not expanded
     }
   };
 
   const handleCommitToggle = (commitId) => {
     if (expandedCommits.includes(commitId)) {
-      setExpandedCommits(expandedCommits.filter((id) => id !== commitId));
+      setExpandedCommits(expandedCommits.filter((id) => id !== commitId)); // Collapse the commit if it is already expanded
     } else {
-      setExpandedCommits([...expandedCommits, commitId]);
+      setExpandedCommits([...expandedCommits, commitId]); // Expand the commit if it is not expanded
     }
   };
 
-  const selectedProject = projects.find((project) => project.id === selectedProjectId);
+  const selectedProject = projects.find((project) => project.id === selectedProjectId); // Find the selected project
 
   return (
     <div className="flex bg-gray-100">

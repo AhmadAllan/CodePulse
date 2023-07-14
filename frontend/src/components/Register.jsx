@@ -3,10 +3,13 @@ import { Link } from "react-router-dom";
 
 const RegisterScreen = () => {
   return (
+    // Add layout to register
     <FormContainer>
+      {/* Title */}
       <h1 className="text-2xl font-bold">Sign Up</h1>
 
       <form>
+        {/* Name input */}
         <div className="my-2">
           <label htmlFor="name" className="block mb-1">
             Your Name
@@ -19,6 +22,7 @@ const RegisterScreen = () => {
           />
         </div>
 
+        {/* Email input */}
         <div className="my-2">
           <label htmlFor="email" className="block mb-1">
             Email Address
@@ -31,6 +35,7 @@ const RegisterScreen = () => {
           />
         </div>
 
+        {/* Password input */}
         <div className="my-2">
           <label htmlFor="password" className="block mb-1">
             Password
@@ -43,6 +48,7 @@ const RegisterScreen = () => {
           />
         </div>
 
+        {/* Confirm password input */}
         <div className="my-2">
           <label htmlFor="confirmPassword" className="block mb-1">
             Confirm Password
@@ -55,6 +61,7 @@ const RegisterScreen = () => {
           />
         </div>
 
+        {/* Sign up button */}
         <button
           type="submit"
           className="bg-blue-500 text-white px-4 py-2 rounded mt-3"
@@ -62,6 +69,7 @@ const RegisterScreen = () => {
           Sign Up
         </button>
 
+        {/* Already have an account section */}
         <div className="py-3">
           <span className="text-sm">
             Already have an account?{" "}

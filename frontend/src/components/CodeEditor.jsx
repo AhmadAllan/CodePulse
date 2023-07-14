@@ -2,6 +2,7 @@ import { useState } from 'react';
 import MonacoEditor from 'react-monaco-editor';
 
 const CodeEditor = () => {
+  // Options for the Monaco editor
   const editorOptions = {
     selectOnLineNumbers: true,
     roundedSelection: false,
@@ -11,13 +12,18 @@ const CodeEditor = () => {
     theme: 'vs-dark',
   };
 
+  // State for toggling visibility of files
   const [isFilesVisible, setIsFilesVisible] = useState(false);
+
+  // State for toggling visibility of source control
   const [isSourceControlVisible, setIsSourceControlVisible] = useState(false);
 
+  // Function to toggle visibility of files
   const toggleFilesVisibility = () => {
     setIsFilesVisible(!isFilesVisible);
   };
 
+  // Function to toggle visibility of source control
   const toggleSourceControlVisibility = () => {
     setIsSourceControlVisible(!isSourceControlVisible);
   };
@@ -35,6 +41,7 @@ const CodeEditor = () => {
               <span className="w-4 h-4 mr-2"></span>
               Files
             </button>
+            {/* Conditionally render files if visible */}
             {isFilesVisible && (
               <div className="pl-4">
                 <p className="text-gray-400">Project Name</p>
@@ -63,6 +70,7 @@ const CodeEditor = () => {
               <span className="w-4 h-4 mr-2"></span>
               Source Control
             </button>
+            {/* Conditionally render source control if visible */}
             {isSourceControlVisible && (
               <div className="pl-4">
                 <ul className="mt-2">

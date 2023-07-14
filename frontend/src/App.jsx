@@ -1,12 +1,14 @@
 import { Outlet } from "react-router-dom";
 import Header from "./components/Header";
-import Hero from "./components/Hero";
 
 const App = () => {
   return (
     <div>
+      {/* Render the Header component */}
       <Header />
-      <Outlet/>
+
+      {/* Render the child routes */}
+      <Outlet />
     </div>
   );
 };

@@ -13,15 +13,24 @@ const Hero = () => {
             manage projects, and boost productivity in a seamless environment.
           </p>
           <div className="flex">
-            <Link to="/login" className="bg-blue-500 text-white px-6 py-3 rounded-lg transition duration-300 hover:bg-blue-600">
+            {/* Sign In button */}
+            <Link
+              to="/login"
+              className="bg-blue-500 text-white px-6 py-3 rounded-lg transition duration-300 hover:bg-blue-600"
+            >
               Sign In
             </Link>
-            <Link to="/register" className="bg-gray-500 text-white px-6 py-3 rounded-lg ml-4 transition duration-300 hover:bg-gray-600">
+            {/* Sign Up button */}
+            <Link
+              to="/register"
+              className="bg-gray-500 text-white px-6 py-3 rounded-lg ml-4 transition duration-300 hover:bg-gray-600"
+            >
               Sign Up
             </Link>
           </div>
           <div className="mt-8">
             <ul className="list-disc list-inside text-gray-700 text-sm">
+              {/* List of features */}
               <li className="mb-2">
                 Collaborate in real-time with multiple users on the same codebase.
               </li>

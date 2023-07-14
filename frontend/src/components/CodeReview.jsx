@@ -1,22 +1,35 @@
 import { useState } from 'react';
 
 const CodeReview = () => {
+  // State for selected project
   const [selectedProject, setSelectedProject] = useState(null);
+
+  // State for selected file
   const [selectedFile, setSelectedFile] = useState(null);
+
+  // State for comments
   const [comments, setComments] = useState([]);
+
+  // State for new comment
   const [newComment, setNewComment] = useState('');
+
+  // State for comment category
   const [commentCategory, setCommentCategory] = useState('all');
 
+  // Determine the current user role based on the selected project
   const currentUserRole = selectedProject?.leader === 'your_username' ? 'leader' : 'member';
 
+  // Function to handle project selection
   const handleProjectSelect = (project) => {
     setSelectedProject(project);
   };
 
+  // Function to handle file selection
   const handleFileSelect = (file) => {
     setSelectedFile(file);
   };
 
+  // Function to handle comment submission
   const handleCommentSubmit = (e) => {
     e.preventDefault();
 
@@ -36,10 +49,12 @@ const CodeReview = () => {
     setNewComment('');
   };
 
+  // Function to handle comment deletion
   const handleCommentDelete = (commentId) => {
     setComments(comments.filter((comment) => comment.id !== commentId));
   };
 
+  // Function to handle category change for a comment
   const handleCategoryChange = (commentId, category) => {
     setComments((prevComments) =>
       prevComments.map((comment) => {
@@ -51,6 +66,7 @@ const CodeReview = () => {
     );
   };
 
+  // Filter comments based on the selected comment category
   const filteredComments = comments.filter((comment) => {
     if (commentCategory === 'all') {
       return true;
@@ -58,6 +74,7 @@ const CodeReview = () => {
     return comment.category === commentCategory;
   });
 
+  // Available project options
   const projectOptions = [
     { name: 'Project A', leader: 'leader1' },
     { name: 'Project B', leader: 'leader2' },

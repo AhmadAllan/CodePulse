@@ -10,8 +10,9 @@ const FormContainer = ({ children }) => {
   );
 };
 
+// Define prop types for the FormContainer component
 FormContainer.propTypes = {
-  children: PropTypes.node.isRequired,
+  children: PropTypes.node.isRequired, // The children prop is required and must be a valid React node
 };
 
 export default FormContainer;

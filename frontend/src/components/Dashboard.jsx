@@ -1,12 +1,15 @@
 import { useState } from 'react';
 
 const Dashboard = () => {
+  // State for active popup
   const [activePopup, setActivePopup] = useState(null);
 
+  // Function to handle opening a popup
   const handlePopupOpen = (popup) => {
     setActivePopup(popup);
   };
 
+  // Function to handle closing the popup
   const handlePopupClose = () => {
     setActivePopup(null);
   };

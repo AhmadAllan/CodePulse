@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 const TaskManagement = () => {
-  const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState('');
+  const [tasks, setTasks] = useState([]); // State to store the tasks
+  const [newTask, setNewTask] = useState(''); // State to store the input for adding new tasks
 
   const handleTaskSubmit = (e) => {
     e.preventDefault();
@@ -17,26 +17,26 @@ const TaskManagement = () => {
       status: 'to-do',
     };
 
-    setTasks([...tasks, task]);
-    setNewTask('');
+    setTasks([...tasks, task]); // Add the new task to the tasks array
+    setNewTask(''); // Clear the input for adding new tasks
   };
 
   const handleTaskDelete = (taskId) => {
-    setTasks(tasks.filter((task) => task.id !== taskId));
+    setTasks(tasks.filter((task) => task.id !== taskId)); // Remove the task from the tasks array
   };
 
   const handleStatusChange = (taskId, newStatus) => {
     setTasks((prevTasks) =>
       prevTasks.map((task) => {
         if (task.id === taskId) {
-          return { ...task, status: newStatus };
+          return { ...task, status: newStatus }; // Update the status of the task
         }
         return task;
       })
     );
   };
 
-  const taskStatusOptions = ['to-do', 'in progress', 'completed'];
+  const taskStatusOptions = ['to-do', 'in progress', 'completed']; // Options for task status
 
   return (
     <div className="container mx-auto py-8">
@@ -60,12 +60,12 @@ const TaskManagement = () => {
       <div>
         <h2 className="text-lg font-bold mb-2">Task List</h2>
         {tasks.length === 0 ? (
-          <p>No tasks found.</p>
+          <p>No tasks found.</p> // Display a message if there are no tasks
         ) : (
           <ul className="bg-gray-100 rounded-lg p-4">
             {tasks.map((task) => (
               <li key={task.id} className="flex items-center justify-between mb-2 border border-gray-300 p-2 rounded">
-                <p>{task.content}</p>
+                <p>{task.content}</p> {/*Display the task content */}
                 <div>
                   {taskStatusOptions.map((status) => (
                     <button
