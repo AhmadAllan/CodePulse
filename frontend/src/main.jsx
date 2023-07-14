@@ -19,6 +19,7 @@ import CodeEditor from "./components/CodeEditor";
 import VersionControl from "./components/VersionControl";
 import ChatPage from "./components/ChatPage";
 import CodeReview from "./components/CodeReview";
+import TaskManagement from "./components/TaskManagement";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -32,6 +33,7 @@ const router = createBrowserRouter(
       <Route  path="/versionControl" element={<VersionControl />}/>
       <Route  path="/chat" element={<ChatPage />}/>
       <Route  path="/codeReview" element={<CodeReview />}/>
+      <Route  path="/taskManagement" element={<TaskManagement />}/>
     </Route>
   )
 );
