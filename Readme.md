@@ -11,9 +11,9 @@ productivity.
 ## Brief Info about what the purpose and who work on the project
 This is a graduation project for Software Engineering from Al-Balqa` Applied University
 by whom the project:
-**Ahmad Abed Ibrahim Allan** [GitHub Pages](https://github.com/AhmadAllan)
+**Ahmad Abed Ibrahim Allan** [GitHub Profile](https://github.com/AhmadAllan)
 
-**Jaafar Abdul-Majid Muflih Al-Wahsh**
+**Jaafar AbdalMajid Muflih Al-Wahsh** [GitHub Profile](hhttps://github.com/JaafarAbdalmajeed)
 
 ## Requirements 
 1- User Registration and Authentication: Allow users to create accounts and log in securely to
