@@ -4,11 +4,10 @@ import { createProject, deleteProject, getAllProjects, getProject, updateProject
 const router = express.Router();
 
 router.post('/', createProject);
-router.get('/', getAllProjects)
+router.get('/', getAllProjects);
 router.route('/:id')
-.get(() => getProject)
-.put(() => updateProject)
-.delete(() => deleteProject)
+.get(getProject)
+.put(updateProject)
+.delete(deleteProject);
 
-
-export default router; 
+export default router;
