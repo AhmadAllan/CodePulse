@@ -1,6 +1,5 @@
 import expressAsyncHandler from "express-async-handler";
 import Project from '../models/projectModel.js';
-import mongoose from "mongoose";
 
 // @desc Create a new project
 // @route POST /api/projects/

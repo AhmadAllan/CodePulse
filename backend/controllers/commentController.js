@@ -1,5 +1,5 @@
 import expressAsyncHandler from "express-async-handler";
-const Comment = require('../models/comment');
+import Comment from "../models/commentModel.js";
 
 // function to create a new comment
 
