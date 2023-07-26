@@ -25,7 +25,7 @@ const createComment = expressAsyncHandler(async (req, res) => {
 
 const getCommentsByCollaboration = expressAsyncHandler(async( req, res) => {
     const { projectId } = req.params;
-    const comments = await Comment.find({ project: projectId })
+    const comments = await Comment.find({ prject: projectId })
     .populate('createBy', 'username') // Populate author's username from the User model
 
     res.status(200).json(comments);
