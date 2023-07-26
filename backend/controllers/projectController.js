@@ -40,8 +40,9 @@ const getAllProjects = expressAsyncHandler(async (req, res) => {
 // @access Public
 const getProject = expressAsyncHandler(async (req, res) => {
   const projectId = req.params.id;
-  const project = await Project.findById(projectId);
+  const project = await Project.findById(projectId).populate('createdBy', 'name');
   if (project) {
+  
     res.json(project);
   } else {
     res.status(404);
@@ -55,13 +56,15 @@ const getProject = expressAsyncHandler(async (req, res) => {
 // @access Public
 const updateProject = expressAsyncHandler(async (req, res) => {
   const projectId = req.params.id;
-  const { name, description } = req.body;
+  const { name, description, members } = req.body;
 
   const project = await Project.findById(projectId);
 
   if (project) {
     project.name = name;
     project.description = description;
+    //TODO: مشكله اضافه كل الاشخاص للامصفوفة
+    project.members.push(members)
 
     const updatedProject = await project.save();
     res.json(updatedProject);
