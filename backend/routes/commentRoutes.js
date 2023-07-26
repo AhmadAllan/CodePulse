@@ -1,9 +1,13 @@
 import express from 'express'
-import { createComment } from '../controllers/commentController';
-import { getCommentsByCollaboration } from '../controllers/commentController';
+import { createComment, getCommentsByCollaboration, getAllComments ,deleteComment, updateComment} from '../controllers/commentController.js';
+
 const router = express.Router();
 
 router.post('/', createComment);
-router.get('/:projectId', getCommentsByCollaboration);
+router.get('/', getAllComments);
+router.route('/:projectId')
+.get(getCommentsByCollaboration)
+.put(updateComment)
+.delete(deleteComment)
 
-module.exports = router;
+export default router;

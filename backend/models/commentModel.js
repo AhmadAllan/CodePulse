@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const commentSchema = new mongoose.Schema({
-  Project: {
+  project: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Project',
     required: true,
@@ -23,4 +23,4 @@ const commentSchema = new mongoose.Schema({
 
 const Comment = mongoose.model('Comment', commentSchema);
 
-module.exports = Comment;
+export default Comment;
