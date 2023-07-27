@@ -4,14 +4,13 @@ import Comment from "../models/commentModel.js";
 // function to create a new comment
 
 const createComment = expressAsyncHandler(async (req, res) => {
-  const { project, createdBy, text, toUser } = req.body;
+  const { project, createdBy, text } = req.body;
 
   // Create a new comment instance
   const newComment = await Comment.create({
     project,
     createdBy,
     text,
-    toUser,
   });
   res.status(201).json(newComment);
 });
@@ -58,11 +57,11 @@ const deleteComment = expressAsyncHandler(async (req, res) => {
 // Update comment
 const updateComment = expressAsyncHandler(async (req, res) => {
     const { commentId } = req.params; // Assuming the commentId is passed as a parameter
-    const { text, toUser } = req.body;
+    const { text } = req.body;
     
     const updatedComment = await Comment.findOneAndUpdate(
       { _id: commentId },
-      { text, toUser },
+      { text },
       { new: true }
     );
   
