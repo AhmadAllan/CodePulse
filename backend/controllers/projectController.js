@@ -56,15 +56,37 @@ const getProject = expressAsyncHandler(async (req, res) => {
 // @access Public
 const updateProject = expressAsyncHandler(async (req, res) => {
   const projectId = req.params.id;
-  const { name, description, members } = req.body;
+  const { name, description, members, membersToRemove } = req.body;
 
   const project = await Project.findById(projectId);
 
   if (project) {
     project.name = name;
     project.description = description;
-    //TODO: مشكله اضافه كل الاشخاص للامصفوفة
-    project.members.push(members)
+
+    // Convert members to an array, even if only one member is provided
+    const membersArray = Array.isArray(members) ? members.filter(member => member !== null) : [];
+
+    // Check if membersArray is not empty
+    if (membersArray.length > 0) {
+      // Add new members to the array if they are not already present
+      for (const memberId of membersArray) {
+        if (!project.members.includes(memberId)) {
+          project.members.push(memberId);
+        }
+      }
+    }
+
+    // Check if membersToRemove is an array and not empty
+    if (Array.isArray(membersToRemove) && membersToRemove.length > 0) {
+      // Remove members from the array
+      for (const memberId of membersToRemove) {
+        const index = project.members.indexOf(memberId);
+        if (index !== -1) {
+          project.members.splice(index, 1);
+        }
+      }
+    }
 
     const updatedProject = await project.save();
     res.json(updatedProject);
@@ -73,6 +95,7 @@ const updateProject = expressAsyncHandler(async (req, res) => {
     throw new Error('Project not found');
   }
 });
+
 
 
 // @desc Delete a project

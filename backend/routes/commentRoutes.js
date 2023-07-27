@@ -1,9 +1,6 @@
 import express from 'express'
-<<<<<<< HEAD
 import { createComment, getCommentsByCollaboration, getAllComments ,deleteComment, updateComment} from '../controllers/commentController.js';
-=======
-import { createComment, getCommentsByCollaboration } from '../controllers/commentController.js';
->>>>>>> main
+
 
 const router = express.Router();
 
