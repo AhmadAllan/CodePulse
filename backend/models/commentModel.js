@@ -6,7 +6,7 @@ const commentSchema = new mongoose.Schema({
     ref: 'Project',
     required: true,
   },
-  createBy: {
+  createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
@@ -15,6 +15,10 @@ const commentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  toUser: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }
 },
 {
     timestamps: true,

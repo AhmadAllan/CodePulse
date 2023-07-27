@@ -22,7 +22,7 @@ app.use(cookieParser());
 
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
-app.use('/api/comment', commentRoutes);
+app.use('/api/comments', commentRoutes);
 
 
 if (process.env.NODE_ENV === 'production') {
