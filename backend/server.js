@@ -6,8 +6,9 @@ import connectDB from './config/db.js';
 import cookieParser from 'cookie-parser';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
 import userRoutes from './routes/userRoutes.js';
-import projectRoutes from './routes/projectRoutes.js'
-import commentRoutes from './routes/commentRoutes.js'
+import projectRoutes from './routes/projectRoutes.js';
+import commentRoutes from './routes/commentRoutes.js';
+import taskRoutes from './routes/taskRoutes.js';
 
 
 const port = process.env.PORT || 8000;
@@ -23,6 +24,7 @@ app.use(cookieParser());
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/comments', commentRoutes);
+app.use('/api/tasks', taskRoutes);
 
 
 if (process.env.NODE_ENV === 'production') {
