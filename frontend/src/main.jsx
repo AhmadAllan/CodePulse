@@ -25,18 +25,19 @@ import TaskManagement from "./components/TaskManagement";
 const router = createBrowserRouter(
   // Create routes from JSX elements
   createRoutesFromElements(
-    <Route path="/" element={<App/>}>
+    <Route path="/" element={<App />}>
       {/* Define routes with their corresponding components */}
-      <Route index={true} path="/" element={<Hero/>}/>
+      <Route index={true} path="/" element={<Hero />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/projects" element={<Projects />} />
-      <Route  path="/codeEditor" element={<CodeEditor />}/>
-      <Route  path="/versionControl" element={<VersionControl />}/>
-      <Route  path="/chat" element={<ChatPage />}/>
-      <Route  path="/codeReview" element={<CodeReview />}/>
-      <Route  path="/taskManagement" element={<TaskManagement />}/>
+      {/* Private Routes */}
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/projects" element={<Projects />} />
+        <Route path="/codeEditor" element={<CodeEditor />} />
+        <Route path="/versionControl" element={<VersionControl />} />
+        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/codeReview" element={<CodeReview />} />
+        <Route path="/taskManagement" element={<TaskManagement />} />
     </Route>
   )
 );
@@ -44,7 +45,7 @@ const router = createBrowserRouter(
 // Render the application to the root element
 ReactDOM.createRoot(document.getElementById("root")).render(
   // Wrap the application with Redux Provider and StrictMode
-  <Provider store={store} >
+  <Provider store={store}>
     <React.StrictMode>
       {/* Provide the router instance to the application */}
       <RouterProvider router={router} />
