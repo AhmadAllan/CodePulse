@@ -9,6 +9,8 @@ import userRoutes from './routes/userRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import commentRoutes from './routes/commentRoutes.js';
 import taskRoutes from './routes/taskRoutes.js';
+import chatRoutes from "./routes/chatRoutes.js";
+import messageRoutes from "./routes/messageRoutes.js";
 
 
 const port = process.env.PORT || 8000;
@@ -25,6 +27,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use("/api/chats", chatRoutes);
+app.use("/api/messages", messageRoutes);
 
 
 if (process.env.NODE_ENV === 'production') {

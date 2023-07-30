@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs"
+import bcrypt from "bcryptjs";
 
 const userSchema = mongoose.Schema(
   {
@@ -16,13 +16,27 @@ const userSchema = mongoose.Schema(
       type: String,
       requires: true,
     },
-  }, {
+    // make optional until when how what to do
+    isAdmin: {
+      type: Boolean,
+      // required: true,
+      default: false,
+    },
+    // make optional until when how what to do
+    pic: {
+      type: "String",
+      // required: true,
+      default:
+        "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
+    },
+  },
+  {
     timestamps: true,
   }
 );
 
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) {
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
     next();
   }
 
@@ -30,10 +44,10 @@ userSchema.pre('save', async function(next) {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-userSchema.methods.matchPassword = async function(enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password)
-}
+userSchema.methods.matchPassword = async function (enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
 
-const User = mongoose.model('User', userSchema)
+const User = mongoose.model("User", userSchema);
 
 export default User;
