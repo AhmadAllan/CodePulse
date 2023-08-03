@@ -1,7 +1,7 @@
 import FormContainer from "../components/FormContainer";
 import { Link } from "react-router-dom";
 
-const RegisterScreen = () => {
+const Register = () => {
   return (
     // Add layout to register
     <FormContainer>
@@ -81,4 +81,4 @@ const RegisterScreen = () => {
   );
 };
 
-export default RegisterScreen;
+export default Register;
