@@ -20,6 +20,7 @@ import VersionControl from "./components/VersionControl";
 import ChatPage from "./components/ChatPage";
 import CodeReview from "./components/CodeReview";
 import TaskManagement from "./components/TaskManagement";
+import PrivateRoute from "./utils/PrivateRoute";
 
 // Create a BrowserRouter instance
 const router = createBrowserRouter(
@@ -31,6 +32,7 @@ const router = createBrowserRouter(
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       {/* Private Routes */}
+      <Route path="" element={<PrivateRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/codeEditor" element={<CodeEditor />} />
@@ -38,6 +40,7 @@ const router = createBrowserRouter(
         <Route path="/chat" element={<ChatPage />} />
         <Route path="/codeReview" element={<CodeReview />} />
         <Route path="/taskManagement" element={<TaskManagement />} />
+      </Route>
     </Route>
   )
 );

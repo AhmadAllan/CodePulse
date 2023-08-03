@@ -5,16 +5,28 @@ const userSchema = mongoose.Schema(
   {
     name: {
       type: String,
-      requires: true,
+      required: true,
     },
     email: {
       type: String,
-      requires: true,
+      required: true,
       unique: true,
     },
     password: {
       type: String,
-      requires: true,
+      required: true,
+    },
+    country: {
+      type: String,
+      required: true
+    },
+    gender: {
+      type: String,
+      required: true
+    },
+    edu: {
+      type: String,
+      required: true
     },
     // make optional until when how what to do
     isAdmin: {
