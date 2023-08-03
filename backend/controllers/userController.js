@@ -9,12 +9,15 @@ const authUser = expressAsyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
-  if (user && (await user.matchPassword (password))) {
+  if (user && (await user.matchPassword(password))) {
     generateToken(res, user._id);
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
+      country: user.country,
+      gender: user.gender,
+      edu: user.edu,
     });
   } else {
     res.status(400);
@@ -26,19 +29,22 @@ const authUser = expressAsyncHandler(async (req, res) => {
 // route POST /api/users
 // @access Public
 const registerUser = expressAsyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, country, gender, edu } = req.body;
 
   const userExist = await User.findOne({ email });
 
   if (userExist) {
     res.status(400);
-    throw new Error("User already exist");
+    throw new Error("User already exists");
   }
 
   const user = await User.create({
     name,
     email,
     password,
+    country,
+    gender,
+    edu,
   });
 
   if (user) {
@@ -47,6 +53,9 @@ const registerUser = expressAsyncHandler(async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      country: user.country,
+      gender: user.gender,
+      edu: user.edu,
     });
   } else {
     res.status(400);
@@ -58,10 +67,10 @@ const registerUser = expressAsyncHandler(async (req, res) => {
 // route POST /api/users/logout
 // @access Public
 const logoutUser = expressAsyncHandler(async (req, res) => {
-  res.cookie('jwt', '', {
+  res.cookie("jwt", "", {
     httpOnly: true,
-    expires: new Date(0)
-  })
+    expires: new Date(0),
+  });
   res.status(200).json({ message: "User logged out" });
 });
 
@@ -72,8 +81,11 @@ const getUserProfile = expressAsyncHandler(async (req, res) => {
   const user = {
     _id: req.user._id,
     name: req.user.name,
-    email: req.user.email
-  }
+    email: req.user.email,
+    country: req.user.country,
+    gender: req.user.gender,
+    edu: req.user.edu,
+  };
   res.status(200).json(user);
 });
 
@@ -82,12 +94,15 @@ const getUserProfile = expressAsyncHandler(async (req, res) => {
 // @access Private
 const updateUserProfile = expressAsyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
-  if(user) {
+  if (user) {
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
+    user.country = req.body.country || user.country;
+    user.gender = req.body.gender || user.gender;
+    user.edu = req.body.edu || user.edu;
 
-    if(req.body.password) {
-      user.password = req.body.password
+    if (req.body.password) {
+      user.password = req.body.password;
     }
 
     const updatedUser = await user.save();
@@ -95,11 +110,14 @@ const updateUserProfile = expressAsyncHandler(async (req, res) => {
     res.status(200).json({
       _id: updatedUser._id,
       name: updatedUser.name,
-      email: updatedUser.email
-    })
+      email: updatedUser.email,
+      country: updatedUser.country,
+      gender: updatedUser.gender,
+      edu: updatedUser.edu,
+    });
   } else {
     res.status(404);
-    throw new Error('User not found')
+    throw new Error("User not found");
   }
 });
 
