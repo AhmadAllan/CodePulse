@@ -1,5 +1,9 @@
 import expressAsyncHandler from "express-async-handler";
 import Project from '../models/projectModel.js';
+import { createRepo } from "./controllerGithub.js";//TODO:
+
+
+
 
 // @desc Create a new project
 // @route POST /api/projects/
@@ -18,6 +22,11 @@ const createProject = expressAsyncHandler(async (req, res) => {
     createdBy,
     members
   });
+  const repoResponse = await createRepo(name, description);//TODO:
+  project.githubRepository = repoResponse.data.html_url;//TODO:
+  await project.save();//TODO:
+
+
   res.status(201).json(project);
 });
 

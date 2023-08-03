@@ -14,6 +14,10 @@ const projectSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
     },
+    githubRepository: {
+      type: String, // You can adjust the data type based on your needs
+      default: "", // Default value if no repository is associated yet
+    },
     members: [
       {
         type: mongoose.Schema.Types.ObjectId,
