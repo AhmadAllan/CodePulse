@@ -12,7 +12,7 @@ import {
     createFile,
     deleteFile,
 
-} from'../controllers/controllerGithub.js'; // Import the controller module
+} from'../controllers/githubController.js'; // Import the controller module
 
 router.get('/repository/:owner/:repo',getRepository);
 router.get('/user/:username', getUser);

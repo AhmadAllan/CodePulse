@@ -8,25 +8,28 @@ const accessToken = process.env.tokenCreate;
 
 // url: http://localhost:8000/api/github/repository/userName/repoName
 async function getRepository(req, res) {
-    const { owner, repo } = req.params;
-    const apiUrl = `https://api.github.com/repos/${owner}/${repo}`;
-  
-    try {
-      const response = await axios.get(apiUrl, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-  
-      const repositoryInfo = response.data;
-      
-      res.json(repositoryInfo);
-    } catch (error) {
-      res.status(error.response.status || 500).json({
-        message: error.message,
-      });
-    }
+  const { owner, repo } = req.params;
+
+  const octokit = new Octokit({
+    auth: `token ${accessToken}`, // Replace accessToken with your actual access token
+  });
+
+  try {
+    const response = await octokit.repos.get({
+      owner,
+      repo,
+    });
+
+    const repositoryInfo = response.data;
+
+    res.json(repositoryInfo);
+  } catch (error) {
+    res.status(error.status || 500).json({
+      message: error.message,
+    });
   }
+}
+
   
   // url: http://localhost:8000/api/github/user/userName
   // fetch information user {userInfo , repositories, activity}
@@ -136,71 +139,83 @@ async function getRepository(req, res) {
   "username": "AhmadAllan"
     }
   */
-  async function addCollaborator(req, res) {
-    const { owner, repo, username } = req.body;
-    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/collaborators/${username}`;
-  
-    try {
-      const response = await axios.put(apiUrl, null, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+    async function addCollaborator(req, res) {
+      const { owner, repo, username } = req.body;
+    
+      const octokit = new Octokit({
+        auth: `token ${accessToken}`, // Replace accessToken with your actual access token
       });
-  
-      const collaboratorAdded = response.status === 204; // 204 No Content indicates success
-      res.json({ success: collaboratorAdded });
-    } catch (error) {
-      res.status(error.response.status || 500).json({
-        message: error.message,
-      });
+    
+      try {
+        await octokit.repos.addCollaborator({
+          owner,
+          repo,
+          username,
+        });
+    
+        res.json({ success: true });
+      } catch (error) {
+        res.status(error.status || 500).json({
+          message: error.message,
+        });
+      }
     }
-  }
+    
   
-  async function removeCollaborator(req, res) {
-    const { owner, repo, username } = req.body;
-    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/collaborators/${username}`;
-  
-    try {
-      const response = await axios.delete(apiUrl, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+    async function removeCollaborator(req, res) {
+      const { owner, repo, username } = req.body;
+    
+      const octokit = new Octokit({
+        auth: `token ${accessToken}`, // Replace accessToken with your actual access token
       });
-  
-      const collaboratorRemoved = response.status === 204; // 204 No Content indicates success
-      res.json({ success: collaboratorRemoved });
-    } catch (error) {
-      res.status(error.response.status || 500).json({
-        message: error.message,
-      });
+    
+      try {
+        const response = await octokit.repos.removeCollaborator({
+          owner,
+          repo,
+          username,
+        });
+    
+        const collaboratorRemoved = response.status === 204; // 204 No Content indicates success
+        res.json({ success: collaboratorRemoved });
+      } catch (error) {
+        res.status(error.status || 500).json({
+          message: error.message,
+        });
+      }
     }
-  }
+    
   
   // url: http://localhost:8000/api/github/fetch-file?owner=userName&repo=repoName&path=README.md
   async function fetchFile(req, res) {
     const { owner, repo, path } = req.query;
-    const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+  
+    const octokit = new Octokit({
+      auth: `token ${accessToken}`, // Replace accessToken with your actual access token
+    });
   
     try {
-      const response = await axios.get(apiUrl, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+      const response = await octokit.repos.getContent({
+        owner,
+        repo,
+        path,
       });
   
       const fileData = response.data;
   
       // Decode the base64 content of the file
-      const fileContent = Buffer.from(fileData.content, 'base64').toString('utf-8');//toString('binery')
-      //res.setHeader('Content-Type', 'application/pdf');
+      const fileContent = Buffer.from(fileData.content, 'base64').toString('utf-8');
+      
       res.send(fileContent);
     } catch (error) {
-      res.status(error.response.status || 500).json({
+      res.status(error.status || 500).json({
         message: error.message,
       });
     }
   }
-  
+
+
+
   async function updateFile(req, res) {
     const { owner, repo, path, content, commitMessage } = req.body;
   
@@ -217,7 +232,7 @@ async function getRepository(req, res) {
       });
   
       const currentFileData = getFileResponse.data;
-      const currentFileContent = Buffer.from(currentFileData.content, 'base64').toString();
+      const currentFileContent = Buffer.from(currentFileData.content, 'base64').toString('utf-8');
   
       // Create a new commit with updated content
       const updatedContent = Buffer.from(content, 'utf-8').toString('base64');
@@ -234,36 +249,37 @@ async function getRepository(req, res) {
       // Response indicating success
       res.json({ success: true });
     } catch (error) {
-      res.status(error.response.status || 500).json({
+      res.status(error.status || 500).json({
         message: error.message,
       });
     }
   }
   
   async function createFile(req, res) {
-    const { owner, repo, path, content, commitMessage } = req.body;
-  
-    try {
-      const octokit = new Octokit({
-        auth: `token ${accessToken}`,
-      });
-  
-      const createFileResponse = await octokit.repos.createOrUpdateFileContents({
-        owner,
-        repo,
-        path,
-        message: commitMessage || 'Create file', // Commit message
-        content: Buffer.from(content, 'utf-8').toString('base64'),
-      });
-  
-      // Response indicating success
-      res.json({ success: true });
-    } catch (error) {
-      res.status(error.response.status || 500).json({
-        message: error.message,
-      });
-    }
+  const { owner, repo, path, content, commitMessage } = req.body;
+
+  try {
+    const octokit = new Octokit({
+      auth: `token ${accessToken}`,
+    });
+
+    const createFileResponse = await octokit.repos.createOrUpdateFileContents({
+      owner,
+      repo,
+      path,
+      message: commitMessage || 'Create file', // Commit message
+      content: Buffer.from(content, 'utf-8').toString('base64'),
+    });
+
+    // Response indicating success
+    res.json({ success: true });
+  } catch (error) {
+    res.status(error.status || 500).json({
+      message: error.message,
+    });
   }
+}
+
   
   async function deleteFile(req, res) {
     const { owner, repo, path } = req.body;

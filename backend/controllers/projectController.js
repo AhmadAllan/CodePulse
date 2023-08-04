@@ -1,6 +1,6 @@
 import expressAsyncHandler from "express-async-handler";
 import Project from '../models/projectModel.js';
-import { createRepo } from "./controllerGithub.js";//TODO:
+import { createRepo } from "./githubController.js";//TODO:
 
 
 
