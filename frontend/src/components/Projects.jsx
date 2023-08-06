@@ -1,41 +1,65 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import {
+  useCreateProjectMutation,
+  useGetAllProjectsMutation,
+} from "../slices/projectApiSlice";
 
-const ProjectPage = () => {
-  // State variables
-  const [projects, setProjects] = useState([
-    { id: 1, name: "Project A", role: "owner" },
-    { id: 2, name: "Project B", role: "leader" },
-    { id: 3, name: "Project C", role: "member" },
-  ]);
+const Projects = () => {
+  const { userInfo } = useSelector((state) => state.auth);
+
+  const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
-  const [newProjectName, setNewProjectName] = useState("");
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [members, setMembers] = useState([]);
+  const [isCreatingProject, setIsCreatingProject] = useState(false);
 
-  // Event handlers
+  const { projectsData, isLoading, isSuccess } = useGetAllProjectsMutation();
+  const [createProject] = useCreateProjectMutation();
+
+  useEffect(() => {
+    if (isSuccess) {
+      setProjects((prevProjects) => [...prevProjects, isSuccess]);
+    }
+  }, [isSuccess]);
+
+  useEffect(() => {
+    if (userInfo) {
+      if (!isLoading) {
+        setProjects(projectsData || []);
+      }
+    }
+  }, [userInfo, isLoading, projectsData]);
+
   const handleProjectClick = (projectId) => {
     setSelectedProjectId(projectId);
   };
 
-  const handleAddProject = () => {
-    if (newProjectName.trim() !== "") {
-      const newProject = {
-        id: projects.length + 1,
-        name: newProjectName,
-        role: "owner",
+  const handleCreateProject = async () => {
+    setIsCreatingProject(true);
+    try {
+      const data = {
+        name: name,
+        description: description,
+        createdBy: userInfo._id,
+        members,
       };
 
-      setProjects([...projects, newProject]);
-      setNewProjectName("");
+      await createProject(data);
+
+      setShowCreateModal(false);
+    } catch (error) {
+      console.log(error);
     }
+    setIsCreatingProject(false);
   };
 
-  // Get the selected project based on the selectedProjectId
-  const selectedProject = projects.find(
-    (project) => project.id === selectedProjectId
-  );
-
+  // TODO: the fetch code still does not work the useState project return null
   return (
     <div className="flex bg-gray-100">
-      {/* Project list sidebar */}
+       {/* Project list sidebar */}
       <div className="w-1/4 bg-white rounded-lg shadow-md p-6">
         <h2 className="text-xl font-bold mb-4">My Projects</h2>
         <div className="mb-6">
@@ -44,7 +68,7 @@ const ProjectPage = () => {
             {projects
               .filter(
                 (project) =>
-                  project.role === "owner" || project.role === "leader"
+                  project.createdBy === userInfo._id
               )
               .map((project) => (
                 <li
@@ -65,7 +89,7 @@ const ProjectPage = () => {
           <h3 className="text-lg font-bold mb-2">Member</h3>
           <ul>
             {projects
-              .filter((project) => project.role === "member")
+              .filter((project) => project.createdBy != userInfo._id)
               .map((project) => (
                 <li
                   key={project.id}
@@ -81,20 +105,12 @@ const ProjectPage = () => {
               ))}
           </ul>
           <div className="mt-4">
-            {/* Input for new project name */}
-            <input
-              type="text"
-              placeholder="New Project Name"
-              value={newProjectName}
-              onChange={(e) => setNewProjectName(e.target.value)}
-              className="w-full border border-gray-300 rounded-md py-2 px-4"
-            />
-            {/* Button to add a new project */}
+            {/* Button to open the create project modal */}
             <button
-              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
-              onClick={handleAddProject}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+              onClick={() => setShowCreateModal(true)}
             >
-              Add Project
+              Create Project
             </button>
           </div>
         </div>
@@ -105,58 +121,85 @@ const ProjectPage = () => {
         <div className="w-3/4 bg-white rounded-lg shadow-md p-6">
           {/* Display the selected project name */}
           <h1 className="text-3xl font-bold text-gray-800 mb-6">
-            {selectedProject ? selectedProject.name : "Select a Project"}
+            {selectedProjectId
+              ? projects.find((project) => project.id === selectedProjectId)?.name
+              : "Select a Project"}
           </h1>
-          <div className="grid grid-cols-2 gap-6">
-            {/* Code Editor section */}
-            <div className="bg-blue-500 text-white rounded-lg p-4 flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold">Code Editor</h2>
-                <p className="text-sm">Write and edit code for the project.</p>
-              </div>
-              <button className="px-4 py-2 bg-blue-700 rounded-lg">
-                Open Code Editor
-              </button>
-            </div>
-            {/* Version Control section */}
-            <div className="bg-green-500 text-white rounded-lg p-4 flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold">Version Control</h2>
-                <p className="text-sm">
-                  Manage project versions and collaborate on code.
-                </p>
-              </div>
-              <button className="px-4 py-2 bg-green-700 rounded-lg">
-                Open Version Control
-              </button>
-            </div>
-            {/* Chat section */}
-            <div className="bg-yellow-500 text-white rounded-lg p-4 flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold">Chat</h2>
-                <p className="text-sm">
-                  Communicate with project collaborators.
-                </p>
-              </div>
-              <button className="px-4 py-2 bg-yellow-700 rounded-lg">
-                Open Chat
-              </button>
-            </div>
-            {/* Tasks section */}
-            <div className="bg-purple-500 text-white rounded-lg p-4 flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold">Tasks</h2>
-                <p className="text-sm">Manage and track project tasks.</p>
-              </div>
-              <button className="px-4 py-2 bg-purple-700 rounded-lg">
-                Open Task Management
-              </button>
-            </div>
-          </div>
+          {/* ... Rest of the content sections ... */}
         </div>
       </div>
+
+      {/* ... Create Project Modal ... */}
+      {showCreateModal && (
+        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
+          <div className="bg-white p-6 rounded shadow-md">
+            <h2 className="text-xl font-bold mb-4">Create New Project</h2>
+            <form>
+              <div className="my-2">
+                <label htmlFor="projectName" className="block mb-1">
+                  Project Name
+                </label>
+                <input
+                  type="text"
+                  id="projectName"
+                  placeholder="Enter Project Name"
+                  className="w-full px-4 py-2 border border-gray-300 rounded"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+              <div className="my-2">
+                <label htmlFor="projectDescription" className="block mb-1">
+                  Project Description
+                </label>
+                <textarea
+                  id="projectDescription"
+                  placeholder="Enter Project Description"
+                  className="w-full px-4 py-2 border border-gray-300 rounded"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
+              </div>
+              <div className="my-2">
+                <label htmlFor="members" className="block mb-1">
+                  Members
+                </label>
+                <select
+                  id="members"
+                  multiple
+                  className="w-full px-4 py-2 border border-gray-300 rounded"
+                  value={members}
+                  onChange={(e) =>
+                    setMembers(
+                      Array.from(e.target.selectedOptions, (option) => option.value)
+                    )
+                  }
+                >
+                  {/* ... Fetch and display available members here ... */}
+                </select>
+              </div>
+              {/* ... Add more input fields for other project details as needed ... */}
+              <button
+                type="button"
+                className="bg-blue-500 text-white px-4 py-2 rounded mt-3"
+                onClick={handleCreateProject}
+                disabled={isCreatingProject}
+              >
+                Create Project
+              </button>
+              <button
+                type="button"
+                className="bg-gray-500 text-white px-4 py-2 rounded mt-3 ml-2"
+                onClick={() => setShowCreateModal(false)}
+              >
+                Cancel
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default ProjectPage;
+export default Projects;
