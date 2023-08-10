@@ -9,25 +9,32 @@ import { createRepo } from "./githubController.js";//TODO:
 // @route POST /api/projects/
 // @access Public
 const createProject = expressAsyncHandler(async (req, res) => {
-
   const { name, description, createdBy, members } = req.body;
-  //check if the user doesn't have the same name for a project twice
-  const existingProject = await Project.findOne({ name, createdBy });
-  if (existingProject) {
-    return res.status(400).json({ error: 'A project with the same name already exists for this user' });
+  try {
+    // Check if the user doesn't have the same name for a project twice
+    const existingProject = await Project.findOne({ name, createdBy });
+    if (existingProject) {
+      return res.status(400).json({ error: 'A project with the same name already exists for this user' });
+    }
+
+    const project = await Project.create({
+      name,
+      description,
+      createdBy,
+      members,
+    });
+
+    // Call the createRepo function without passing res
+    const repoResponse = await createRepo(name, description, createdBy); // Pass name and description directly to createRepo
+
+    project.githubRepository = repoResponse.data.html_url;
+    await project.save();
+
+    res.status(201).json(project);
+  } catch (error) {
+    // Handle any errors that might occur during project creation
+    res.status(500).json({ message: 'An error occurred while creating the project' });
   }
-  const project = await Project.create({
-    name,
-    description,
-    createdBy,
-    members
-  });
-  const repoResponse = await createRepo(name, description);//TODO:
-  project.githubRepository = repoResponse.data.html_url;//TODO:
-  await project.save();//TODO:
-
-
-  res.status(201).json(project);
 });
 
 

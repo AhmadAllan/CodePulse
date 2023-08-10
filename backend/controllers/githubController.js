@@ -109,32 +109,24 @@ async function getRepository(req, res) {
   // url: http://localhost:8000/api/github/create-repo
 
   //TODO:(req,res)
-  async function createRepo(name, description) {
-    //TODO: { name, description, isPrivate, has_issues, has_projects, has_wiki } = req.body;
-
+  async function createRepo(name, description, createdBy) {
     try {
-        const octokit = new Octokit({
-            auth: `token ${accessToken}`,
-        });
-
-        const response = await octokit.repos.createForAuthenticatedUser({
-            name, // Name of the repository (required)
-            description, // Description of the repository
-            //TODO:
-            // private: !!isPrivate, // Whether the repository is private (true/false)
-            // has_issues: !!has_issues, // Enable or disable issues (true/false)
-            // has_projects: !!has_projects, // Enable or disable projects (true/false)
-            // has_wiki: !!has_wiki, // Enable or disable wiki (true/false)
-        });
-
-        console.log('GitHub API response for createrepo:', response.data); // Log the response data
-        //TODO: res.json(response.data)
-        return response;
+      const octokit = new Octokit({
+        auth: `token ${accessToken}`,
+      });
+  
+      const response = await octokit.repos.createForAuthenticatedUser({
+        name, // Name of the repository (required)
+        description, // Description of the repository
+        createdBy,
+        // TODO: Add other properties as needed
+      });
+  
+      console.log('GitHub API response for createRepo:', response.data);
+      return response; // Return the response directly without using res
     } catch (error) {
-        console.error(error);
-        res.status(error.response?.status || 500).json({
-            message: error.message,
-        });
+      console.error(error);
+      throw new Error('An error occurred while creating the GitHub repository');
     }
   }
 

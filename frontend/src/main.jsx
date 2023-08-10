@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
+import ReactDOM from "react-dom";
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -46,12 +46,12 @@ const router = createBrowserRouter(
 );
 
 // Render the application to the root element
-ReactDOM.createRoot(document.getElementById("root")).render(
-  // Wrap the application with Redux Provider and StrictMode
+ReactDOM.render(
   <Provider store={store}>
     <React.StrictMode>
-      {/* Provide the router instance to the application */}
       <RouterProvider router={router} />
     </React.StrictMode>
-  </Provider>
+  </Provider>,
+  document.getElementById("root")
 );
+
