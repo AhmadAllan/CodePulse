@@ -1,6 +1,10 @@
 import expressAsyncHandler from "express-async-handler";
 import Project from '../models/projectModel.js';
-import { createRepo } from "./githubController.js";//TODO:
+import User from '../models/userModel.js';
+import {
+   createRepo,
+   deleteRepo
+ } from "./githubController.js";//TODO:
 
 
 
@@ -122,12 +126,29 @@ const deleteProject = expressAsyncHandler(async (req, res) => {
   const project = await Project.findById(projectId);
 
   if (project) {
-    await project.remove();
-    res.json({ message: 'Project removed successfully' });
+    const user = await User.findById(project.createdBy)
+    if (user) {
+      try {
+        await deleteRepo(user.name, project.name);
+        const deleteProjectResult = await Project.findByIdAndDelete(projectId);
+        if (deleteProjectResult) {
+          res.json({ message: 'Project removed successfully' });
+        } else {
+          res.status(404);
+          throw new Error('Project not found');
+        }
+      } catch (error) {
+        res.status(500).json({ message: 'Error deleting project' });
+      }
+    } else {
+      res.status(404);
+      throw new Error('User not found');
+    }
   } else {
     res.status(404);
     throw new Error('Project not found');
   }
+    
 });
 
 
