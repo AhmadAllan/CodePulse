@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { Octokit } from '@octokit/rest';
 import dotenv from 'dotenv';
+import { json } from 'express';
 dotenv.config();
 
 //Token user in Github
@@ -35,42 +36,34 @@ async function getRepository(req, res) {
   // fetch information user {userInfo , repositories, activity}
   async function getUser(req, res) {
     const { username } = req.params;
-    const userApiUrl = `https://api.github.com/users/${username}`;
-    const reposApiUrl = `https://api.github.com/users/${username}/repos`;
-    const activityApiUrl = `https://api.github.com/users/${username}/events/public`;
-  
+    const octokit = new Octokit({
+      auth: `token ${accessToken}`,
+    });
     try {
-      const [userResponse, reposResponse, activityResponse] = await Promise.all([
-        axios.get(userApiUrl, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }),
-        axios.get(reposApiUrl, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }),
-        axios.get(activityApiUrl, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }),
-      ]);
-  
+      const userResponse = await octokit.users.getByUsername({
+        username
+      })
+      const reposResponse = await octokit.repos.listForUser({
+        username
+      })
+      const activityResponse = await octokit.activity.listPublicEventsForUser({
+        username
+      })
+
       const userInfo = userResponse.data;
-      const repositories = reposResponse.data;
-      const activity = activityResponse.data;
-  
+      const userRepo = reposResponse.data;
+      const userActivity = activityResponse.data;
+
       res.json({
         userInfo,
-        repositories,
-        activity,
-      });
+        userRepo,
+        userActivity
+
+      })
     } catch (error) {
       res.status(error.response.status || 500).json({
-        message: error.message,
-      });
+               message: error.message,
+           });
     }
   }
   
@@ -99,8 +92,8 @@ async function getRepository(req, res) {
   }
 
   // url: http://localhost:8000/api/github/create-repo
-  async function deleteRepo(req, res) {
-    const { owner, repo } = req.params;
+  async function deleteRepo(owner, repo) {
+    //const { owner, repo } = req.params;
     try {
       const octokit = new Octokit({
         auth: `token ${accessToken}`,
@@ -112,12 +105,8 @@ async function getRepository(req, res) {
         repo,
       });
   
-      // Return a success message
-      res.json({ success: true, message: `Repository '${owner}/${repo}' has been deleted.` });
     } catch (error) {
-      res.status(error.response?.status || 500).json({
-        message: error.message,
-      });
+      throw new Error('Error deleting repository');
     }
   }
   
