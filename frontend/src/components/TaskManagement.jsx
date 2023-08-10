@@ -1,92 +1,82 @@
-import { useState, useEffect } from 'react';
-import { useCreateTaskMutation, useGetAllTasksMutation, useUpdateTaskMutation, useDeleteTaskMutation } from '../slices/taskApiSlice';
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 const TaskManagement = () => {
+  const { userInfo } = useSelector((state) => state.auth);
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [toUser, setToUser] = useState("");
-  const [status, setStatus] = useState("");
+  const [createdBy, setCreatedBy] = useState(userInfo._id);
+  const [toUser, setToUser] = useState(userInfo._id);
+  const [status, setStatus] = useState("to-do");
   const [tasks, setTasks] = useState([]);
-  const [newTaskForm, setNewTaskForm] = useState({
-    name: '',
-    description: '',
-    status: 'to-do',
-  });
-  const [isCreateTaskOpen, setIsCreateTaskOpen] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
-
-  const createTaskMutation = useCreateTaskMutation();
-  const getAllTasksMutation = useGetAllTasksMutation();
-  const updateTaskMutation = useUpdateTaskMutation();
-  const deleteTaskMutation = useDeleteTaskMutation();
+  const taskStatusOptions = ["to-do", "in progress", "completed"];
+  
 
   useEffect(() => {
-    const fetchAllTasks = async () => {
-      try {
-        const { data } = await getAllTasksMutation.mutateAsync();
-        setTasks(data);
-      } catch (error) {
-        console.error('Error fetching tasks:', error);
-      }
-    };
-
     fetchAllTasks();
-  }, [getAllTasksMutation]);
+  }, []);
 
-  const handleFormChange = (e) => {
-    const { name, value } = e.target;
-    setNewTaskForm({
-      ...newTaskForm,
-      [name]: value,
-    });
+  const fetchAllTasks = async () => {
+    try {
+      const response = await axios.get("/api/tasks");
+      setTasks(response.data);
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
   };
 
   const handleTaskSubmit = async (e) => {
     e.preventDefault();
 
-    if (newTaskForm.name.trim() === '') {
+    if (name.trim() === "") {
       return;
     }
 
     try {
-      const { data } = await createTaskMutation.mutateAsync(newTaskForm);
-      setTasks([...tasks, data]);
+      const response = await axios.post("/api/tasks", {
+        name,
+        description,
+        createdBy,
+        toUser,
+        status,
+      });
+      setTasks([...tasks, response.data]);
+      setShowCreateModal(false); // Close the create modal
     } catch (error) {
-      console.error('Error creating task:', error);
+      console.error("Error creating task:", error);
     }
 
-    setNewTaskForm({
-      name: '',
-      description: '',
-      status: 'to-do',
-    });
-    setIsCreateTaskOpen(false);
+    setName("");
+    setDescription("");
+    setStatus("");
   };
 
   const handleTaskDelete = async (taskId) => {
     try {
-      await deleteTaskMutation.mutateAsync(taskId);
-      setTasks(tasks.filter((task) => task.id !== taskId));
+      await axios.delete(`/api/tasks/${taskId}`);
+      setTasks(tasks.filter((task) => task._id !== taskId));
     } catch (error) {
-      console.error('Error deleting task:', error);
+      console.log("here");
+      console.error("Error deleting task:", error);
     }
   };
 
-  const handleStatusChange = async (taskId, newStatus) => {
+  const handleTaskStatusChange = async (taskId, newStatus) => {
     try {
-      const { data } = await updateTaskMutation.mutateAsync({
-        taskId,
-        status: newStatus,
-      });
+      await axios.put(`/api/tasks/${taskId}`, { status: newStatus });
       setTasks((prevTasks) =>
-        prevTasks.map((task) => (task.id === data.id ? data : task))
+        prevTasks.map((task) =>
+          task._id === taskId ? { ...task, status: newStatus } : task
+        )
       );
     } catch (error) {
-      console.error('Error updating task status:', error);
+      console.error("Error updating task status:", error);
     }
   };
-
-  const taskStatusOptions = ['to-do', 'in progress', 'completed'];
+  
 
   return (
     <div className="container mx-auto py-8">
@@ -98,7 +88,6 @@ const TaskManagement = () => {
         Create Task
       </button>
 
-      {/* ... Create Task Modal ... */}
       {showCreateModal && (
         <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
           <div className="bg-white p-6 rounded shadow-md">
@@ -110,42 +99,24 @@ const TaskManagement = () => {
                 </label>
                 <input
                   type="text"
-                  id="projectName"
-                  placeholder="Enter Project Name"
+                  id="taskName"
+                  placeholder="Enter Task Name"
                   className="w-full px-4 py-2 border border-gray-300 rounded"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
               <div className="my-2">
-                <label htmlFor="projectDescription" className="block mb-1">
+                <label htmlFor="taskDescription" className="block mb-1">
                   Task Description
                 </label>
                 <textarea
                   id="taskDescription"
-                  placeholder="Enter Project Description"
+                  placeholder="Enter Task Description"
                   className="w-full px-4 py-2 border border-gray-300 rounded"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
-              </div>
-              <div className="my-2">
-                <label htmlFor="user" className="block mb-1">
-                  For user
-                </label>
-                <select
-                  id="user"
-                  multiple
-                  className="w-full px-4 py-2 border border-gray-300 rounded"
-                  value={toUser}
-                  onChange={(e) =>
-                    setToUser(
-                      Array.from(e.target.selectedOptions, (option) => option.value)
-                    )
-                  }
-                >
-                  {/* ... Fetch and display available members here ... */}
-                </select>
               </div>
               <div className="my-2">
                 <label htmlFor="status" className="block mb-1">
@@ -168,7 +139,6 @@ const TaskManagement = () => {
                 type="button"
                 className="bg-blue-500 text-white px-4 py-2 rounded mt-3"
                 onClick={handleTaskSubmit}
-                disabled={isCreateTaskOpen}
               >
                 Create Task
               </button>
@@ -185,29 +155,36 @@ const TaskManagement = () => {
       )}
 
       <div>
-        <h2 className="text-lg font-bold mb-2">Task List</h2>
+        <h2 className="text-lg font-bold mb-2 mt-5">Task List</h2>
         {tasks.length === 0 ? (
           <p>No tasks found.</p>
         ) : (
           <ul className="bg-gray-100 rounded-lg p-4">
             {tasks.map((task) => (
-              <li key={task.id} className="flex items-center justify-between mb-2 border border-gray-300 p-2 rounded">
+              <li
+                key={task._id}
+                className="flex items-center justify-between mb-2 border border-gray-300 p-2 rounded"
+              >
                 <p>{task.name}</p>
                 <div>
-                  {taskStatusOptions.map((status) => (
+                  {taskStatusOptions.map((statusOption) => (
                     <button
-                      key={status}
-                      onClick={() => handleStatusChange(task.id, status)}
+                      key={statusOption}
                       className={`py-1 px-2 rounded ${
-                        task.status === status ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-800'
+                        task.status === statusOption
+                          ? "bg-blue-500 text-white"
+                          : "bg-gray-300 text-gray-800"
                       }`}
-                      style={{ marginRight: '0.5rem' }}
+                      style={{ marginRight: "0.5rem" }}
+                      onClick={() =>
+                        handleTaskStatusChange(task._id, statusOption)
+                      }
                     >
-                      {status}
+                      {statusOption}
                     </button>
                   ))}
                   <button
-                    onClick={() => handleTaskDelete(task.id)}
+                    onClick={() => handleTaskDelete(task._id)}
                     className="text-red-500 hover:text-red-600 ml-2 focus:outline-none"
                   >
                     Delete

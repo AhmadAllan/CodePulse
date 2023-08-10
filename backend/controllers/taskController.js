@@ -58,24 +58,23 @@ const deleteTask = expressAsyncHandler(async (req, res) => {
 
 // Update Task
 const updateTask = expressAsyncHandler(async (req, res) => {
-    const { TaskId } = req.params; // Assuming the TaskId is passed as a parameter
-    const { description } = req.body;
-    const { status } = req.body;
-    
-    const updatedTask = await Task.findOneAndUpdate(
-      { _id: TaskId },
-      { description },
-      { status },
-      { new: true }
-    );
-  
-    if (!updatedTask) {
-      res.status(404);
-      throw new Error('Task not found');
-    }
-  
-    res.status(200).json(updatedTask);
-  });
+  const { TaskId } = req.params; // Assuming the TaskId is passed as a parameter
+  const { description, status } = req.body; // Destructure status from the request body
+
+  const updatedTask = await Task.findOneAndUpdate(
+    { _id: TaskId },
+    { description, status }, // Pass both description and status as fields to update
+    { new: true } // This option returns the updated document
+  );
+
+  if (!updatedTask) {
+    res.status(404);
+    throw new Error('Task not found');
+  }
+
+  res.status(200).json(updatedTask);
+});
+
   
 export {
   createTask,
