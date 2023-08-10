@@ -1,6 +1,11 @@
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import axios from "axios";
+import {
+  fetchAllTasks,
+  createTask,
+  deleteTask,
+  updateTaskStatus,
+} from "../services/taskService"; // Update the path to match your file structure
 
 const TaskManagement = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -13,60 +18,55 @@ const TaskManagement = () => {
   const [tasks, setTasks] = useState([]);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const taskStatusOptions = ["to-do", "in progress", "completed"];
-  
 
   useEffect(() => {
-    fetchAllTasks();
-  }, []);
-
-  const fetchAllTasks = async () => {
-    try {
-      const response = await axios.get("/api/tasks");
-      setTasks(response.data);
-    } catch (error) {
-      console.error("Error fetching tasks:", error);
+    async function fetchData() {
+      try {
+        const tasksData = await fetchAllTasks();
+        setTasks(tasksData);
+      } catch (error) {
+        console.error("Error fetching tasks:", error);
+      }
     }
-  };
+    fetchData();
+  }, []);
 
   const handleTaskSubmit = async (e) => {
     e.preventDefault();
-
     if (name.trim() === "") {
       return;
     }
 
     try {
-      const response = await axios.post("/api/tasks", {
+      const response = await createTask({
         name,
         description,
         createdBy,
         toUser,
         status,
       });
-      setTasks([...tasks, response.data]);
+      setTasks([...tasks, response]);
       setShowCreateModal(false); // Close the create modal
+      setName("");
+      setDescription("");
+      setStatus("");
     } catch (error) {
       console.error("Error creating task:", error);
     }
-
-    setName("");
-    setDescription("");
-    setStatus("");
   };
 
   const handleTaskDelete = async (taskId) => {
     try {
-      await axios.delete(`/api/tasks/${taskId}`);
+      await deleteTask(taskId);
       setTasks(tasks.filter((task) => task._id !== taskId));
     } catch (error) {
-      console.log("here");
       console.error("Error deleting task:", error);
     }
   };
 
   const handleTaskStatusChange = async (taskId, newStatus) => {
     try {
-      await axios.put(`/api/tasks/${taskId}`, { status: newStatus });
+      await updateTaskStatus(taskId, newStatus);
       setTasks((prevTasks) =>
         prevTasks.map((task) =>
           task._id === taskId ? { ...task, status: newStatus } : task
@@ -75,8 +75,7 @@ const TaskManagement = () => {
     } catch (error) {
       console.error("Error updating task status:", error);
     }
-  };
-  
+  }; 
 
   return (
     <div className="container mx-auto py-8">
