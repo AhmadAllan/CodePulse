@@ -10,6 +10,26 @@ export const fetchAllTasks = async () => {
   }
 };
 
+export const fetchTaskById = async (taskId) => {
+  try {
+    const response = await axios.get(`/api/tasks/${taskId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+    throw error;
+  }
+};
+
+export const fetchTasksByProject = async (projectId) => {
+  try {
+    const response = await axios.get(`/api/project/${projectId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching tasks:", error);
+    throw error;
+  }
+}
+
 export const createTask = async (taskData) => {
   try {
     const response = await axios.post("/api/tasks", taskData);

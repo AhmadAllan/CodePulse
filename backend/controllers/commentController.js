@@ -4,12 +4,13 @@ import Comment from "../models/commentModel.js";
 // function to create a new comment
 
 const createComment = expressAsyncHandler(async (req, res) => {
-  const { project, createdBy, text } = req.body;
+  const { project, createdBy, title, text } = req.body;
 
   // Create a new comment instance
   const newComment = await Comment.create({
     project,
     createdBy,
+    title,
     text,
   });
   res.status(201).json(newComment);

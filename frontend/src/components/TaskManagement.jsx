@@ -5,7 +5,7 @@ import {
   createTask,
   deleteTask,
   updateTaskStatus,
-} from "../services/taskService"; // Update the path to match your file structure
+} from "../services/taskService";
 
 const TaskManagement = () => {
   const { userInfo } = useSelector((state) => state.auth);

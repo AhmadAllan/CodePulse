@@ -4,16 +4,24 @@ const commentSchema = new mongoose.Schema({
   project: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Project',
-    required: true,
+    // required: true,
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
   },
+  title: {
+    type: String,
+    required: true
+  },
   text: {
     type: String,
     required: true,
+  },
+  status: {
+    type: String,
+    require: true,
   }
 },
 {
