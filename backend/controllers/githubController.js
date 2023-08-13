@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { Octokit } from '@octokit/rest';
 import dotenv from 'dotenv';
 import { json } from 'express';
@@ -110,7 +109,8 @@ async function getRepository(req, res) {
         repo
       })
     } catch (error) {
-      throw new Error('Error deleting repository');
+      console.error('Error deleting repository', error);
+      throw error
     }
   }
   

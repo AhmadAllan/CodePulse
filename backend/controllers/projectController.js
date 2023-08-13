@@ -1,6 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import Project from '../models/projectModel.js';
 import User from '../models/userModel.js';
+import axios from "axios";
 import {
    createRepo,
    deleteRepo,
@@ -132,7 +133,13 @@ const updateProject = expressAsyncHandler(async (req, res) => {
     
     const user = await User.findById(project.createdBy)
     // TODO: fix the problem here, get the username from github not the database
-    const owner = user.name
+    const response = await axios.get('https://api.github.com/user', {
+    headers: {
+      Authorization: `Bearer ${process.env.tokenCreate}`,
+    },
+  });
+  console.log(response.data.login);
+    const owner = response.data.login;
     const repo = project.name
     // Convert members to an array, even if only one member is provided
     //const membersArray = Array.isArray(members) ? members.filter(member => member !== null) : [];
@@ -212,11 +219,16 @@ const updateProject = expressAsyncHandler(async (req, res) => {
 const deleteProject = expressAsyncHandler(async (req, res) => {
   const projectId = req.params.id;
   const project = await Project.findById(projectId);
+  const response = await axios.get('https://api.github.com/user', {
+    headers: {
+      Authorization: `Bearer ${process.env.tokenCreate}`,
+    },
+  });
 
   if (project) {
     const user = await User.findById(project.createdBy)
      if (user) {
-         await deleteRepo(user.name, project.name);
+         await deleteRepo(response.data.login, project.name);
          const deleteProjectResult = await Project.findByIdAndDelete(projectId);
         if (deleteProjectResult) {
           res.json({ message: 'Project removed successfully' });
