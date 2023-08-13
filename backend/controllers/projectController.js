@@ -3,8 +3,14 @@ import Project from '../models/projectModel.js';
 import User from '../models/userModel.js';
 import {
    createRepo,
-   deleteRepo
- } from "./githubController.js";//TODO:
+   deleteRepo,
+   addCollaborator,
+   removeCollaborator,
+   fetchFiles,
+   createFile,
+   deleteFile,
+   updateFile,
+ } from "./githubController.js";
 
 
 
@@ -62,8 +68,24 @@ const getProject = expressAsyncHandler(async (req, res) => {
   const projectId = req.params.id;
   const project = await Project.findById(projectId).populate('createdBy', 'name');
   if (project) {
-  
-    res.json(project);
+    
+    const files =await fetchFiles(project.createdBy.name, project.name)
+
+    const fileNames = files
+        .filter(file => file.path)
+        .map(file => file.path.split('/').pop());
+
+    const projectInfo = {
+      project: {
+        id: project._id,
+        name: project.name,
+        createBy: project.createdBy.name
+      },
+      files: fileNames
+    }
+    res.json({
+      projectInfo
+    });
   } else {
     res.status(404);
     throw new Error('Project not found');
@@ -74,39 +96,91 @@ const getProject = expressAsyncHandler(async (req, res) => {
 // @desc Update a project
 // @route PUT /api/projects/:id
 // @access Public
+
 const updateProject = expressAsyncHandler(async (req, res) => {
   const projectId = req.params.id;
-  const { name, description, members, membersToRemove } = req.body;
+  const 
+  { name,
+    description,
+    membersToAdd, 
+    membersToRemove, 
+    createdFile, 
+    newFileContent, 
+    commitMessage,
+    deletedFile,
+    updatedFile
+  } = req.body;
 
   const project = await Project.findById(projectId);
-
+  
   if (project) {
     project.name = name;
-    project.description = description;
+    
+    const user = await User.findById(project.createdBy)
 
+    const owner = user.name
+    const repo = project.name
     // Convert members to an array, even if only one member is provided
-    const membersArray = Array.isArray(members) ? members.filter(member => member !== null) : [];
-
+    //const membersArray = Array.isArray(members) ? members.filter(member => member !== null) : [];
     // Check if membersArray is not empty
-    if (membersArray.length > 0) {
-      // Add new members to the array if they are not already present
-      for (const memberId of membersArray) {
+    if (membersToAdd && membersToAdd.length > 0) {
+      for (const memberId of membersToAdd) {
         if (!project.members.includes(memberId)) {
-          project.members.push(memberId);
+          const collaborator = await User.findById(memberId)
+            project.members.push(memberId);
+            addCollaborator(owner, repo, collaborator.name)
         }
       }
     }
-
     // Check if membersToRemove is an array and not empty
-    if (Array.isArray(membersToRemove) && membersToRemove.length > 0) {
+    if (membersToRemove && membersToRemove.length > 0) {
       // Remove members from the array
       for (const memberId of membersToRemove) {
         const index = project.members.indexOf(memberId);
         if (index !== -1) {
+
+          const collaborator = await User.findById(memberId)
+          console.log('exist',collaborator.name)
+          removeCollaborator(owner, repo, collaborator.name)
           project.members.splice(index, 1);
+        } else {
+          console.log('not exist')
         }
       }
     }
+
+    //create file 
+    if (newFileContent && createdFile && commitMessage) {
+      
+      try {
+        const createFileResponse = await createFile(owner, repo, createdFile, newFileContent, commitMessage);
+        console.log('File created:', createFileResponse);
+      } catch (error) {
+        console.error('Error creating file:', error);
+      }
+    }
+
+    //delete file
+    if(deletedFile) {
+      try {
+        const deleteFileResponse = await deleteFile(owner, repo, deletedFile)
+        console.log('File deleted:', deleteFileResponse);
+      } catch (error) {
+        console.error('Error delete file:', error);
+      }
+    }
+
+    //update file
+    if(updatedFile) {
+      try {
+        const updateFileResponse = await updateFile(owner, repo, updatedFile, newFileContent, commitMessage)
+        console.log('File deleted:', updateFileResponse);
+      } catch (error) {
+        console.error('Error update file:', error);
+      }
+    }
+
+
 
     const updatedProject = await project.save();
     res.json(updatedProject);
@@ -127,27 +201,17 @@ const deleteProject = expressAsyncHandler(async (req, res) => {
 
   if (project) {
     const user = await User.findById(project.createdBy)
-    if (user) {
-      try {
-        await deleteRepo(user.name, project.name);
-        const deleteProjectResult = await Project.findByIdAndDelete(projectId);
+     if (user) {
+         await deleteRepo(user.name, project.name);
+         const deleteProjectResult = await Project.findByIdAndDelete(projectId);
         if (deleteProjectResult) {
           res.json({ message: 'Project removed successfully' });
         } else {
           res.status(404);
           throw new Error('Project not found');
         }
-      } catch (error) {
-        res.status(500).json({ message: 'Error deleting project' });
-      }
-    } else {
-      res.status(404);
-      throw new Error('User not found');
+     } 
     }
-  } else {
-    res.status(404);
-    throw new Error('Project not found');
-  }
     
 });
 
