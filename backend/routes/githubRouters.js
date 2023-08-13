@@ -11,18 +11,20 @@ import {
     updateFile,
     createFile,
     deleteFile,
+    fetchFiles,
 
 } from'../controllers/githubController.js'; // Import the controller module
 
-router.get('/repository/:owner/:repo',getRepository);
+router.get('/repository',getRepository);
 router.get('/user/:username', getUser);
 router.post('/create-repo', createRepo);
 router.delete('/delete-repo/:owner/:repo',deleteRepo);
 router.post('/add-collaborator', addCollaborator);
-router.post('/remove-collaborator', removeCollaborator);
+router.delete('/remove-collaborator', removeCollaborator);
 router.get('/fetch-file', fetchFile);
 router.post('/update-file', updateFile);
 router.post('/create-file', createFile);
 router.delete('/delete-file', deleteFile);
+router.get('/files',fetchFiles);
 
 export default router

@@ -9,7 +9,7 @@ const accessToken = process.env.tokenCreate;
 
 // url: http://localhost:8000/api/github/repository/userName/repoName
 async function getRepository(req, res) {
-  const { owner, repo } = req.params;
+  const { owner, repo } = req.query;
 
   const octokit = new Octokit({
     auth: `token ${accessToken}`, // Replace accessToken with your actual access token
@@ -104,7 +104,11 @@ async function getRepository(req, res) {
         owner,
         repo,
       });
-  
+
+      return json({
+        owner,
+        repo
+      })
     } catch (error) {
       throw new Error('Error deleting repository');
     }
@@ -120,8 +124,11 @@ async function getRepository(req, res) {
   "username": "AhmadAllan"
     }
   */
-    async function addCollaborator(req, res) {
-      const { owner, repo, username } = req.body;
+    async function addCollaborator(owner, repo, username) {
+      //const { owner, repo, username } = req.body;
+      console.log(owner)
+      console.log(repo)
+      console.log(username)
     
       const octokit = new Octokit({
         auth: `token ${accessToken}`, // Replace accessToken with your actual access token
@@ -134,17 +141,22 @@ async function getRepository(req, res) {
           username,
         });
     
-        res.json({ success: true });
+        //res.json({ success: true });
+        return {message: 'success full adding collaborater'}
       } catch (error) {
-        res.status(error.status || 500).json({
-          message: error.message,
-        });
+        console.log('not add coll')
+        //res.status(error.status || 500).json({
+          //message: error.message,
+        //});
       }
     }
     
   
     async function removeCollaborator(req, res) {
       const { owner, repo, username } = req.body;
+      console.log(owner)
+      console.log(repo)
+      console.log(username)
     
       const octokit = new Octokit({
         auth: `token ${accessToken}`, // Replace accessToken with your actual access token
@@ -156,13 +168,19 @@ async function getRepository(req, res) {
           repo,
           username,
         });
+        
+        // if (response.status === 204) {
+        //   console.log(`Collaborator ${username} removed from repository`);
+        // } else {
+        //   console.log(`Failed to remove collaborator ${username} from repository`);
+        // }
     
         const collaboratorRemoved = response.status === 204; // 204 No Content indicates success
         res.json({ success: collaboratorRemoved });
       } catch (error) {
-        res.status(error.status || 500).json({
-          message: error.message,
-        });
+        console.error('Error removing collaborator:', error);
+        throw new Error('Failed to remove collaborator from repository');
+    
       }
     }
     
@@ -197,8 +215,9 @@ async function getRepository(req, res) {
 
 
 
-  async function updateFile(req, res) {
-    const { owner, repo, path, content, commitMessage } = req.body;
+
+  async function updateFile(owner, repo, path, content, commitMessage) {
+    //const { owner, repo, path, content, commitMessage } = req.body;
   
     try {
       const octokit = new Octokit({
@@ -228,16 +247,18 @@ async function getRepository(req, res) {
       });
   
       // Response indicating success
-      res.json({ success: true });
+      //res.json({ success: true });
+      return updateFileResponse
     } catch (error) {
-      res.status(error.status || 500).json({
-        message: error.message,
-      });
+      console.log('not updated file')
+      // res.status(error.status || 500).json({
+      //   message: error.message,
+      // });
     }
   }
   
-  async function createFile(req, res) {
-  const { owner, repo, path, content, commitMessage } = req.body;
+  async function createFile(owner, repo, path, content, commitMessage) {
+  //const { owner, repo, path, content, commitMessage } = req.body;
 
   try {
     const octokit = new Octokit({
@@ -253,31 +274,28 @@ async function getRepository(req, res) {
     });
 
     // Response indicating success
-    res.json({ success: true });
+    //res.json({ success: true });
+    return createFileResponse.data
   } catch (error) {
-    res.status(error.status || 500).json({
-      message: error.message,
-    });
+    console.log('Not create file')
+    // res.status(error.status || 500).json({
+    //   message: error.message,
+    // });
   }
 }
 
-  
-  async function deleteFile(req, res) {
-    const { owner, repo, path } = req.body;
-  
+  async function deleteFile(owner, repo, path) {
+    //const { owner, repo, path } = req.body;
     try {
       const octokit = new Octokit({
         auth: `token ${accessToken}`,
       });
-  
       const getFileResponse = await octokit.repos.getContent({
         owner,
         repo,
         path,
       });
-  
       const currentFileData = getFileResponse.data;
-  
       const deleteFileResponse = await octokit.repos.deleteFile({
         owner,
         repo,
@@ -285,17 +303,34 @@ async function getRepository(req, res) {
         message: 'Delete file', // Commit message
         sha: currentFileData.sha, // The SHA of the existing file
       });
-  
       // Return the deleteFileResponse in the JSON response
-      res.json({ success: true });
+      return deleteFileResponse
     } catch (error) {
-      res.status(error.response.status || 500).json({
-        message: error.message,
-      });
+      console.log('not deleted file')
+      // res.status(error.response.status || 500).json({
+      //   message: error.message,
+      // });
+    }
+  }
+
+  async function fetchFiles(owner, repo) {
+    //const {owner, repo} = req.query
+    const octokit = new Octokit({
+      auth:`token ${accessToken}`
+    })
+    try {
+      const response = await octokit.repos.getContent({
+        owner,
+        repo,
+      })
+      const files = response.data;
+      return files
+    } catch (error) {
+      console.error('Error fetching files:', error);
+
     }
   }
   
-
 
 export {
     getRepository,
@@ -308,5 +343,6 @@ export {
     updateFile,
     createFile,
     deleteFile,
+    fetchFiles
   };
   
