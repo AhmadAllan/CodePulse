@@ -69,23 +69,37 @@ const getProject = expressAsyncHandler(async (req, res) => {
   const project = await Project.findById(projectId).populate('createdBy', 'name');
   if (project) {
     
-    const files =await fetchFiles(project.createdBy.name, project.name)
-
-    const fileNames = files
+    const files = await fetchFiles(project.createdBy.name, project.name)
+    
+    if (typeof files === 'undefined' || files === '0') {
+      // No content in the repository
+      res.json({
+        message: 'No content in the repository'
+      });
+    } else {
+      const fileNames = files
         .filter(file => file.path)
         .map(file => file.path.split('/').pop());
 
-    const projectInfo = {
-      project: {
-        id: project._id,
-        name: project.name,
-        createBy: project.createdBy.name
-      },
-      files: fileNames
+        const projectInfo = {
+          project: {
+            id: project._id,
+            name: project.name,
+            createBy: project.createdBy.name
+          },
+          files: fileNames
+        }
+
+        res.json({
+          projectInfo
+        });
+
     }
-    res.json({
-      projectInfo
-    });
+
+    
+
+    
+    
   } else {
     res.status(404);
     throw new Error('Project not found');
