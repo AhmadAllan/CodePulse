@@ -277,7 +277,7 @@ async function getRepository(req, res) {
     //res.json({ success: true });
     return createFileResponse.data
   } catch (error) {
-    console.log('Not create file')
+    console.log('Not create file:', error )
     // res.status(error.status || 500).json({
     //   message: error.message,
     // });
