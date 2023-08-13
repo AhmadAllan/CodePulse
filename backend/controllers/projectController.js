@@ -131,7 +131,7 @@ const updateProject = expressAsyncHandler(async (req, res) => {
     project.name = name;
     
     const user = await User.findById(project.createdBy)
-
+    // TODO: fix the problem here, get the username from github not the database
     const owner = user.name
     const repo = project.name
     // Convert members to an array, even if only one member is provided
