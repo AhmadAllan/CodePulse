@@ -11,7 +11,7 @@ import commentRoutes from './routes/commentRoutes.js';
 import taskRoutes from './routes/taskRoutes.js';
 import chatRoutes from "./routes/chatRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
-import routersGithub from './routes/githubRouters.js'
+import routersGithub from './routes/githubRoutes.js'
 
 
 const port = process.env.PORT || 8000;

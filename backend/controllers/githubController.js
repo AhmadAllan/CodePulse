@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { Octokit } from '@octokit/rest';
 import dotenv from 'dotenv';
 import { json } from 'express';
@@ -107,7 +106,8 @@ async function getRepository(req, res) {
         repo
       })
     } catch (error) {
-      throw new Error('Error deleting repository');
+      console.error('Error deleting repository', error);
+      throw error
     }
   }
   
@@ -239,7 +239,7 @@ async function getRepository(req, res) {
     //res.json({ success: true });
     return createFileResponse.data
   } catch (error) {
-    console.log('Not create file')
+    console.log('Not create file:', error )
     // res.status(error.status || 500).json({
     //   message: error.message,
     // });

@@ -5,8 +5,8 @@ import {
   fetchProjectById,
   createProject,
   updateProjectStatus,
-  deleteProject
-} from "../services/projectService"
+  deleteProject,
+} from "../services/projectService";
 
 const ProjectPage = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -29,8 +29,7 @@ const ProjectPage = () => {
       }
     }
     fetchData();
-  }, [])
-
+  }, []);
 
   const [selectedProjectId, setSelectedProjectId] = useState(null);
 
@@ -47,7 +46,7 @@ const ProjectPage = () => {
         createdBy,
         members,
       });
-      setProjects([...projects, response])
+      setProjects([...projects, response]);
       setShowCreateModal(false); // Close the create modal
       setName("");
       setDescription("");
@@ -67,7 +66,7 @@ const ProjectPage = () => {
   };
 
   // TODO: see if you need to add updateProject and fetchProjectById
- 
+
   const selectedProject = projects.find(
     (project) => project._id === selectedProjectId
   );
@@ -80,10 +79,7 @@ const ProjectPage = () => {
           <h3 className="text-lg font-bold mb-2">Owner/Leader</h3>
           <ul>
             {projects
-              .filter(
-                (project) =>
-                  project.createdBy === userInfo._id
-              )
+              .filter((project) => project.createdBy === userInfo._id)
               .map((project) => (
                 <li
                   key={project._id}
@@ -130,16 +126,20 @@ const ProjectPage = () => {
       </div>
       <div className="flex justify-center items-center h-screen bg-gray-100">
         <div className="w-3/4 bg-white rounded-lg shadow-md p-6">
-          <div className="flex justify-between">
-            <h1 className="text-3xl font-bold text-gray-800 mb-6">
-              {selectedProject ? selectedProject.name : "Select a Project"}
-            </h1>
-            <button
-                    onClick={() => handleProjectDelete(selectedProjectId)}
-                    className="text-red-500 hover:text-red-600 focus:outline-none"
-                  >
-                    Delete
-                  </button>
+          <div>
+            {selectedProject ? (
+                  <div className="flex justify-between">
+                    <h1 className="text-3xl font-bold text-gray-800 mb-6">{selectedProject.name}</h1>
+                    <button
+                      onClick={() => handleProjectDelete(selectedProjectId)}
+                      className="text-red-500 hover:text-red-600 focus:outline-none"
+                    >
+                      Delete
+                    </button>
+                  </div>
+              ) : (
+                <h1 className="text-3xl font-bold text-gray-800 mb-6">Select a Project</h1>
+              )}
           </div>
           <div className="grid grid-cols-2 gap-6">
             <div className="bg-blue-500 text-white rounded-lg p-4 flex items-center justify-between">
