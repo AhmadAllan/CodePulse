@@ -13,9 +13,6 @@ import {
    updateFile,
  } from "./githubController.js";
 
-
-
-
 // @desc Create a new project
 // @route POST /api/projects/
 // @access Public
@@ -36,7 +33,7 @@ const createProject = expressAsyncHandler(async (req, res) => {
     });
 
     // Call the createRepo function without passing res
-    const repoResponse = await createRepo(name, description, createdBy); // Pass name and description directly to createRepo
+    const repoResponse = await createRepo(name, description); // Pass name and description directly to createRepo
 
     project.githubRepository = repoResponse.data.html_url;
     await project.save();
@@ -96,11 +93,6 @@ const getProject = expressAsyncHandler(async (req, res) => {
         });
 
     }
-
-    
-
-    
-    
   } else {
     res.status(404);
     throw new Error('Project not found');
@@ -131,6 +123,7 @@ const updateProject = expressAsyncHandler(async (req, res) => {
   if (project) {
     project.name = name;
     
+    
     const user = await User.findById(project.createdBy)
     // TODO: fix the problem here, get the username from github not the database
     const response = await axios.get('https://api.github.com/user', {
@@ -149,7 +142,7 @@ const updateProject = expressAsyncHandler(async (req, res) => {
         if (!project.members.includes(memberId)) {
           const collaborator = await User.findById(memberId)
             project.members.push(memberId);
-            addCollaborator(owner, repo, collaborator.name)
+            addCollaborator(repo, collaborator.name)
         }
       }
     }
@@ -162,7 +155,7 @@ const updateProject = expressAsyncHandler(async (req, res) => {
 
           const collaborator = await User.findById(memberId)
           console.log('exist',collaborator.name)
-          removeCollaborator(owner, repo, collaborator.name)
+          removeCollaborator(repo, collaborator.name)
           project.members.splice(index, 1);
         } else {
           console.log('not exist')
@@ -174,17 +167,18 @@ const updateProject = expressAsyncHandler(async (req, res) => {
     if (newFileContent && createdFile && commitMessage) {
       
       try {
-        const createFileResponse = await createFile(owner, repo, createdFile, newFileContent, commitMessage);
+        const createFileResponse = await createFile(repo, createdFile, newFileContent, commitMessage);
         console.log('File created:', createFileResponse);
       } catch (error) {
         console.error('Error creating file:', error);
+        throw new error
       }
     }
 
     //delete file
     if(deletedFile) {
       try {
-        const deleteFileResponse = await deleteFile(owner, repo, deletedFile)
+        const deleteFileResponse = await deleteFile(repo, deletedFile)
         console.log('File deleted:', deleteFileResponse);
       } catch (error) {
         console.error('Error delete file:', error);
@@ -194,7 +188,7 @@ const updateProject = expressAsyncHandler(async (req, res) => {
     //update file
     if(updatedFile) {
       try {
-        const updateFileResponse = await updateFile(owner, repo, updatedFile, newFileContent, commitMessage)
+        const updateFileResponse = await updateFile(repo, updatedFile, newFileContent, commitMessage)
         console.log('File deleted:', updateFileResponse);
       } catch (error) {
         console.error('Error update file:', error);
@@ -228,7 +222,7 @@ const deleteProject = expressAsyncHandler(async (req, res) => {
   if (project) {
     const user = await User.findById(project.createdBy)
      if (user) {
-         await deleteRepo(response.data.login, project.name);
+         await deleteRepo(project.name);
          const deleteProjectResult = await Project.findByIdAndDelete(projectId);
         if (deleteProjectResult) {
           res.json({ message: 'Project removed successfully' });
