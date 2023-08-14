@@ -11,7 +11,7 @@ const TaskManagement = () => {
   const { userInfo } = useSelector((state) => state.auth);
 
   const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  // const [description, setDescription] = useState("");
   const [createdBy, setCreatedBy] = useState(userInfo._id);
   const [toUser, setToUser] = useState(userInfo._id);
   const [status, setStatus] = useState("to-do");
@@ -80,32 +80,21 @@ const TaskManagement = () => {
   return (
     <div className="container mx-auto py-8">
       <h1 className="text-3xl font-bold mb-4">Task Management</h1>
-      <button
-        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg ml-2 focus:outline-none"
-        onClick={() => setShowCreateModal(true)}
-      >
-        Create Task
-      </button>
-
-      {showCreateModal && (
-        <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-60">
-          <div className="bg-white p-6 rounded shadow-md">
-            <h2 className="text-xl font-bold mb-4">Create New Task</h2>
-            <form>
-              <div className="my-2">
+      <form onSubmit={handleTaskSubmit} className="mb-4">
+      <div className="my-2">
                 <label htmlFor="taskName" className="block mb-1">
-                  Task Name
+                  Task
                 </label>
                 <input
                   type="text"
                   id="taskName"
-                  placeholder="Enter Task Name"
+                  placeholder="Enter Task"
                   className="w-full px-4 py-2 border border-gray-300 rounded"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
-              <div className="my-2">
+              {/* <div className="my-2">
                 <label htmlFor="taskDescription" className="block mb-1">
                   Task Description
                 </label>
@@ -116,7 +105,7 @@ const TaskManagement = () => {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
-              </div>
+              </div> */}
               <div className="my-2">
                 <label htmlFor="status" className="block mb-1">
                   Task Status
@@ -134,25 +123,13 @@ const TaskManagement = () => {
                   ))}
                 </select>
               </div>
-              <button
-                type="button"
-                className="bg-blue-500 text-white px-4 py-2 rounded mt-3"
-                onClick={handleTaskSubmit}
-              >
-                Create Task
-              </button>
-              <button
-                type="button"
-                className="bg-gray-500 text-white px-4 py-2 rounded mt-3 ml-2"
-                onClick={() => setShowCreateModal(false)}
-              >
-                Cancel
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
+        <button
+          type="submit"
+          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg mt-2 focus:outline-none transition duration-300 ease-in-out"
+        >
+          Submit Comment
+        </button>
+      </form>
       <div>
         <h2 className="text-lg font-bold mb-2 mt-5">Task List</h2>
         {tasks.length === 0 ? (

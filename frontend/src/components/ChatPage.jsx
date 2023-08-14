@@ -73,13 +73,13 @@ const ChatPage = () => {
         >
           <div
             className={`flex-none rounded-full h-8 w-8 flex items-center justify-center mr-2 ${
-              message.author === 'User1' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-800'
+              message.author === 'User1' ? 'hidden' : 'bg-gray-300 text-gray-800'
             }`}
           >
             {message.author[0]}
           </div>
           <div
-            className={`bg-gray-200 rounded-lg py-2 px-4 ${message.author === 'User1' ? 'bg-blue-100' : ''}`}
+            className={` rounded-lg py-2 px-4 ${message.author === 'User1' ? 'bg-blue-500' : 'bg-gray-200'}`}
           >
             <p className="text-gray-800">{message.content}</p>
             <span className="text-xs text-gray-500">{message.timestamp}</span>

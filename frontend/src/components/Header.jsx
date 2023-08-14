@@ -4,6 +4,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useLogoutMutation } from "../slices/userApiSlice";
 import { logout } from "../slices/authSlice";
+import { Fragment } from "react";
+import { Menu, Transition } from "@headlessui/react";
+import { UserCircleIcon } from "@heroicons/react/20/solid";
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
 
 const Header = () => {
   const location = useLocation();
@@ -27,22 +34,21 @@ const Header = () => {
 
   return (
     <header className="bg-gray-900 text-white">
-      <nav className="container mx-auto flex items-center justify-between p-4">
-        <Link to="/">CodePulse</Link> {/* Logo or site name */}
-        <ul className="flex items-center space-x-4">
-          {userInfo ? (
-            <>
-              {/* Add the routes as nav elements */}
+      <nav className="container mx-auto flex items-center justify-between p-3">
+        <Link to="/">CodePulse</Link>
+        {userInfo ? (
+          <>
+            <ul className="flex items-center space-x-4">
               <li>
                 <Link
                   to="/dashboard"
                   className={`text-gray-400 ${
                     isActive("/dashboard")
                       ? "text-white border-b-2 border-white"
-                      : "" // Add 'text-white' class and underline for active link
+                      : ""
                   }`}
                 >
-                  <span>Dashboard</span> {/* Link text */}
+                  <span>Dashboard</span>
                 </Link>
               </li>
               <li>
@@ -51,10 +57,10 @@ const Header = () => {
                   className={`text-gray-400 ${
                     isActive("/projects")
                       ? "text-white border-b-2 border-white"
-                      : "" // Add 'text-white' class and underline for active link
+                      : ""
                   }`}
                 >
-                  <span>Projects</span> {/* Link text */}
+                  <span>Projects</span>
                 </Link>
               </li>
               <li>
@@ -63,10 +69,10 @@ const Header = () => {
                   className={`text-gray-400 ${
                     isActive("/codeEditor")
                       ? "text-white border-b-2 border-white"
-                      : "" // Add 'text-white' class and underline for active link
+                      : ""
                   }`}
                 >
-                  <span>Code Editor</span> {/* Link text */}
+                  <span>Code Editor</span>
                 </Link>
               </li>
               <li>
@@ -75,10 +81,10 @@ const Header = () => {
                   className={`text-gray-400 ${
                     isActive("/versionControl")
                       ? "text-white border-b-2 border-white"
-                      : "" // Add 'text-white' class and underline for active link
+                      : ""
                   }`}
                 >
-                  <span>Version Control</span> {/* Link text */}
+                  <span>Version Control</span>
                 </Link>
               </li>
               <li>
@@ -87,10 +93,10 @@ const Header = () => {
                   className={`text-gray-400 ${
                     isActive("/chat")
                       ? "text-white border-b-2 border-white"
-                      : "" // Add 'text-white' class and underline for active link
+                      : ""
                   }`}
                 >
-                  <span>Chat</span> {/* Link text */}
+                  <span>Chat</span>
                 </Link>
               </li>
               <li>
@@ -99,10 +105,10 @@ const Header = () => {
                   className={`text-gray-400 ${
                     isActive("/codeReview")
                       ? "text-white border-b-2 border-white"
-                      : "" // Add 'text-white' class and underline for active link
+                      : ""
                   }`}
                 >
-                  <span>Code Review</span> {/* Link text */}
+                  <span>Code Review</span>
                 </Link>
               </li>
               <li>
@@ -111,19 +117,74 @@ const Header = () => {
                   className={`text-gray-400 ${
                     isActive("/taskManagement")
                       ? "text-white border-b-2 border-white"
-                      : "" // Add 'text-white' class and underline for active link
+                      : ""
                   }`}
                 >
-                  <span>Task Management</span> {/* Link text */}
+                  <span>Task Management</span>
                 </Link>
               </li>
+            </ul>
+            <Menu as="div" className="relative inline-block text-right">
+              <div className="bg-transparent">
+                <Menu.Button className="flex w-full justify-center gap-x-1.5 items-center p-1">
+                  {userInfo.name}
+                  <UserCircleIcon
+                    className="-mr-1 h-8 w-8 text-gray-400"
+                    aria-hidden="true"
+                  />
+                </Menu.Button>
+              </div>
 
-              <li>
-                <Link onClick={logoutHandler}>logout</Link>
-              </li>
-            </>
-          ) : (
-            <>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <div className="py-1">
+                  <Menu.Item>
+                      {({ active }) => (
+                        <Link
+                          to="/profile"
+                          className={classNames(
+                            active
+                              ? "bg-gray-100 text-gray-900"
+                              : "text-gray-700",
+                            "block px-4 py-2 text-sm"
+                          )}
+                        >
+                          Profile
+                        </Link>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <Link
+                          onClick={logoutHandler}
+                          className={classNames(
+                            active
+                              ? "bg-gray-100 text-gray-900"
+                              : "text-gray-700",
+                            "block px-4 py-2 text-sm"
+                          )}
+                        >
+                          Logout
+                        </Link>
+                      )}
+                    </Menu.Item>
+                    
+                  </div>
+                </Menu.Items>
+              </Transition>
+            </Menu>
+          </>
+        ) : (
+          <>
+            <ul className="flex items-center space-x-4">
               <li>
                 <Link
                   to="/login"
@@ -132,7 +193,7 @@ const Header = () => {
                   }`}
                 >
                   <FaSignInAlt /> {/* Log in icon */}
-                  <span className="ml-1">Sign In</span> {/* Link text */}
+                  <span className="ml-1">Sign In</span>
                 </Link>
               </li>
               <li>
@@ -143,12 +204,12 @@ const Header = () => {
                   }`}
                 >
                   <FaSignOutAlt /> {/* Log out icon */}
-                  <span className="ml-1">Sign Up</span> {/* Link text */}
+                  <span className="ml-1">Sign Up</span>
                 </Link>
               </li>
-            </>
-          )}
-        </ul>
+            </ul>
+          </>
+        )}
       </nav>
     </header>
   );

@@ -4,34 +4,50 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
 const VersionControl = () => {
   const [projects] = useState([
-    // Array of projects with their branches, pulls, and commits
+    {
+      id: 1,
+      name: 'Project A',
+      branches: ['main', 'feature-1', 'bugfix-1'],
+      pushs: [
+        { id: 1, title: 'Implement feature 1', author: 'John Doe', date: '2023-08-14', file: 'main.js' },
+        { id: 2, title: 'Fix critical bug', author: 'Jane Smith', date: '2023-08-15', file: 'bugfix.js' },
+      ],
+      commits: [
+        { id: 1, message: 'Initial commit', author: 'John Doe', date: '2023-08-10' },
+        { id: 2, message: 'Implement feature 1', author: 'John Doe', date: '2023-08-12' },
+        { id: 3, message: 'Fix bug in feature 1', author: 'John Doe', date: '2023-08-13' },
+      ],
+    },
+    // Add more projects here
   ]);
 
-  const [selectedProjectId, setSelectedProjectId] = useState(1); // State to track the selected project
-  const [expandedPulls, setExpandedPulls] = useState([]); // State to track expanded pulls
-  const [expandedCommits, setExpandedCommits] = useState([]); // State to track expanded commits
+  const [selectedProjectId, setSelectedProjectId] = useState(1);
+  const [expandedpushs, setExpandedpushs] = useState([]);
+  const [expandedCommits, setExpandedCommits] = useState([]);
 
   const handleProjectChange = (projectId) => {
-    setSelectedProjectId(projectId); // Update the selected project
+    setSelectedProjectId(projectId);
   };
 
-  const handlePullToggle = (pullId) => {
-    if (expandedPulls.includes(pullId)) {
-      setExpandedPulls(expandedPulls.filter((id) => id !== pullId)); // Collapse the pull if it is already expanded
-    } else {
-      setExpandedPulls([...expandedPulls, pullId]); // Expand the pull if it is not expanded
-    }
+  const handlepushToggle = (pushId) => {
+    // Toggle the push's expanded state
+    setExpandedpushs((prevExpandedpushs) =>
+      prevExpandedpushs.includes(pushId)
+        ? prevExpandedpushs.filter((id) => id !== pushId)
+        : [...prevExpandedpushs, pushId]
+    );
   };
 
   const handleCommitToggle = (commitId) => {
-    if (expandedCommits.includes(commitId)) {
-      setExpandedCommits(expandedCommits.filter((id) => id !== commitId)); // Collapse the commit if it is already expanded
-    } else {
-      setExpandedCommits([...expandedCommits, commitId]); // Expand the commit if it is not expanded
-    }
+    // Toggle the commit's expanded state
+    setExpandedCommits((prevExpandedCommits) =>
+      prevExpandedCommits.includes(commitId)
+        ? prevExpandedCommits.filter((id) => id !== commitId)
+        : [...prevExpandedCommits, commitId]
+    );
   };
 
-  const selectedProject = projects.find((project) => project.id === selectedProjectId); // Find the selected project
+  const selectedProject = projects.find((project) => project.id === selectedProjectId);
 
   return (
     <div className="flex bg-gray-100">
@@ -69,27 +85,27 @@ const VersionControl = () => {
               </ul>
             </div>
             <div className="border border-gray-300 rounded-lg p-4 mb-4">
-              <h3 className="text-lg font-bold mb-2">Pulls</h3>
-              {selectedProject.pulls.map((pull) => (
-                <div key={pull.id} className="mb-2">
+              <h3 className="text-lg font-bold mb-2">pushs</h3>
+              {selectedProject.pushs.map((push) => (
+                <div key={push.id} className="mb-2">
                   <div
                     className="flex items-center justify-between cursor-pointer"
-                    onClick={() => handlePullToggle(pull.id)}
+                    onClick={() => handlepushToggle(push.id)}
                   >
-                    <span>{pull.title}</span>
+                    <span>{push.title}</span>
                     <FontAwesomeIcon
                       icon={faChevronDown}
                       className={`ml-2 ${
-                        expandedPulls.includes(pull.id) ? 'transform rotate-180' : ''
+                        expandedpushs.includes(push.id) ? 'transform rotate-180' : ''
                       }`}
                     />
                   </div>
-                  {expandedPulls.includes(pull.id) && (
+                  {expandedpushs.includes(push.id) && (
                     <div className="pl-4">
                       <p>
-                        Author: {pull.author}<br />
-                        Date: {pull.date}<br />
-                        File: {pull.file}
+                        Author: {push.author}<br />
+                        Date: {push.date}<br />
+                        File: {push.file}
                       </p>
                     </div>
                   )}

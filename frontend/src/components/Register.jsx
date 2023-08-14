@@ -14,6 +14,7 @@ const Register = () => {
   const [country, setCountry] = useState("");
   const [gender, setGender] = useState("");
   const [edu, setEdu] = useState("");
+  const [token, setToken] = useState("");
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -116,7 +117,18 @@ const Register = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
         </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 font-medium mb-2">
+            GitHub Token
+          </label>
 
+          <input
+            type="token"
+            className="border p-2 w-full"
+            value={token}
+            onChange={(e) => setToken(e.target.value)}
+          />
+        </div>
         {/* Country select */}
         <div className="my-2">
           <label htmlFor="country" className="block mb-1">
