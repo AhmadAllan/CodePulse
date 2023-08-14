@@ -16,7 +16,7 @@ import {
 } from'../controllers/githubController.js'; // Import the controller module
 
 router.get('/repository',getRepository);
-router.get('/user/:username', getUser);
+router.get('/user', getUser);
 router.post('/create-repo', createRepo);
 router.delete('/delete-repo/:owner/:repo',deleteRepo);
 router.post('/add-collaborator', addCollaborator);

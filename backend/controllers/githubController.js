@@ -7,13 +7,17 @@ dotenv.config();
 //Token user in Github
 const accessToken = process.env.tokenCreate;
 
+const octokit = new Octokit({
+  auth: `token ${accessToken}`, // Replace accessToken with your actual access token
+});
+
+const userResponse = await octokit.users.getAuthenticated();
+    const owner = userResponse.data.login;
+
 // url: http://localhost:8000/api/github/repository/userName/repoName
 async function getRepository(req, res) {
-  const { owner, repo } = req.query;
+  const { repo } = req.query;
 
-  const octokit = new Octokit({
-    auth: `token ${accessToken}`, // Replace accessToken with your actual access token
-  });
 
   try {
     const response = await octokit.repos.get({
@@ -30,24 +34,21 @@ async function getRepository(req, res) {
     });
   }
 }
-
   
   // url: http://localhost:8000/api/github/user/userName
   // fetch information user {userInfo , repositories, activity}
   async function getUser(req, res) {
-    const { username } = req.params;
-    const octokit = new Octokit({
-      auth: `token ${accessToken}`,
-    });
+    //const { username } = req.params;
+    
     try {
       const userResponse = await octokit.users.getByUsername({
-        username
+        username:owner,
       })
       const reposResponse = await octokit.repos.listForUser({
-        username
+        username:owner,
       })
       const activityResponse = await octokit.activity.listPublicEventsForUser({
-        username
+        username:owner,
       })
 
       const userInfo = userResponse.data;
@@ -70,16 +71,14 @@ async function getRepository(req, res) {
   // url: http://localhost:8000/api/github/create-repo
 
   //TODO:(req,res)
-  async function createRepo(name, description, createdBy) {
+  async function createRepo(name, description) {
     try {
-      const octokit = new Octokit({
-        auth: `token ${accessToken}`,
-      });
+      
   
       const response = await octokit.repos.createForAuthenticatedUser({
         name, // Name of the repository (required)
         description, // Description of the repository
-        createdBy,
+        owner,
         // TODO: Add other properties as needed
       });
   
@@ -92,12 +91,10 @@ async function getRepository(req, res) {
   }
 
   // url: http://localhost:8000/api/github/create-repo
-  async function deleteRepo(owner, repo) {
+  async function deleteRepo(repo) {
     //const { owner, repo } = req.params;
     try {
-      const octokit = new Octokit({
-        auth: `token ${accessToken}`,
-      });
+      
   
       // Delete the repository
       await octokit.repos.delete({
@@ -114,8 +111,6 @@ async function getRepository(req, res) {
     }
   }
   
-  
-  
   // url: http://localhost:8000/api/github/add-collaborator
   /*
   {
@@ -124,15 +119,9 @@ async function getRepository(req, res) {
   "username": "AhmadAllan"
     }
   */
-    async function addCollaborator(owner, repo, username) {
+    async function addCollaborator(repo, username) {
       //const { owner, repo, username } = req.body;
-      console.log(owner)
-      console.log(repo)
-      console.log(username)
-    
-      const octokit = new Octokit({
-        auth: `token ${accessToken}`, // Replace accessToken with your actual access token
-      });
+      
     
       try {
         await octokit.repos.addCollaborator({
@@ -153,14 +142,8 @@ async function getRepository(req, res) {
     
   
     async function removeCollaborator(req, res) {
-      const { owner, repo, username } = req.body;
-      console.log(owner)
-      console.log(repo)
-      console.log(username)
-    
-      const octokit = new Octokit({
-        auth: `token ${accessToken}`, // Replace accessToken with your actual access token
-      });
+      const {repo, username } = req.body;
+      
     
       try {
         const response = await octokit.repos.removeCollaborator({
@@ -168,12 +151,6 @@ async function getRepository(req, res) {
           repo,
           username,
         });
-        
-        // if (response.status === 204) {
-        //   console.log(`Collaborator ${username} removed from repository`);
-        // } else {
-        //   console.log(`Failed to remove collaborator ${username} from repository`);
-        // }
     
         const collaboratorRemoved = response.status === 204; // 204 No Content indicates success
         res.json({ success: collaboratorRemoved });
@@ -187,11 +164,7 @@ async function getRepository(req, res) {
   
   // url: http://localhost:8000/api/github/fetch-file?owner=userName&repo=repoName&path=README.md
   async function fetchFile(req, res) {
-    const { owner, repo, path } = req.query;
-  
-    const octokit = new Octokit({
-      auth: `token ${accessToken}`, // Replace accessToken with your actual access token
-    });
+    const { repo, path } = req.query;
   
     try {
       const response = await octokit.repos.getContent({
@@ -212,18 +185,10 @@ async function getRepository(req, res) {
       });
     }
   }
-
-
-
-
-  async function updateFile(owner, repo, path, content, commitMessage) {
+  async function updateFile(repo, path, content, commitMessage) {
     //const { owner, repo, path, content, commitMessage } = req.body;
   
     try {
-      const octokit = new Octokit({
-        auth: `token ${accessToken}`,
-      });
-  
       // Fetch the current file data
       const getFileResponse = await octokit.repos.getContent({
         owner,
@@ -251,20 +216,17 @@ async function getRepository(req, res) {
       return updateFileResponse
     } catch (error) {
       console.log('not updated file')
+      throw new error
       // res.status(error.status || 500).json({
       //   message: error.message,
       // });
     }
   }
   
-  async function createFile(owner, repo, path, content, commitMessage) {
+  async function createFile(repo, path, content, commitMessage) {
   //const { owner, repo, path, content, commitMessage } = req.body;
 
   try {
-    const octokit = new Octokit({
-      auth: `token ${accessToken}`,
-    });
-
     const createFileResponse = await octokit.repos.createOrUpdateFileContents({
       owner,
       repo,
@@ -284,12 +246,9 @@ async function getRepository(req, res) {
   }
 }
 
-  async function deleteFile(owner, repo, path) {
+  async function deleteFile(repo, path) {
     //const { owner, repo, path } = req.body;
     try {
-      const octokit = new Octokit({
-        auth: `token ${accessToken}`,
-      });
       const getFileResponse = await octokit.repos.getContent({
         owner,
         repo,
@@ -313,11 +272,8 @@ async function getRepository(req, res) {
     }
   }
 
-  async function fetchFiles(owner, repo) {
+  async function fetchFiles(repo) {
     //const {owner, repo} = req.query
-    const octokit = new Octokit({
-      auth:`token ${accessToken}`
-    })
     try {
       const response = await octokit.repos.getContent({
         owner,
