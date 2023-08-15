@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { setDefaultProject, clearDefaultProject } from "../slices/defaultProjectSlice";
 import {
   fetchAllProjects,
   fetchProjectById,
@@ -8,7 +9,10 @@ import {
   deleteProject,
 } from "../services/projectService";
 
+
 const ProjectPage = () => {
+  const dispatch = useDispatch();
+  const defaultProject = useSelector((state) => state.defaultProject);
   const { userInfo } = useSelector((state) => state.auth);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -35,6 +39,7 @@ const ProjectPage = () => {
 
   const handleProjectClick = (projectId) => {
     setSelectedProjectId(projectId);
+    dispatch(setDefaultProject(projectId));
   };
 
   const handleCreateProject = async (e) => {

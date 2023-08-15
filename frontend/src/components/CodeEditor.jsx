@@ -1,5 +1,15 @@
-import { useState } from 'react';
-import MonacoEditor from 'react-monaco-editor';
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { AiOutlineFile } from "react-icons/ai";
+import { SiGithubactions } from "react-icons/si";
+import {
+  getRepository,
+  getUser,
+  fetchFile,
+  fetchFiles,
+  updateFile
+} from "../services/githubService";
+import MonacoEditor from "react-monaco-editor";
 
 const CodeEditor = () => {
   // Options for the Monaco editor
@@ -7,91 +17,109 @@ const CodeEditor = () => {
     selectOnLineNumbers: true,
     roundedSelection: false,
     readOnly: false,
-    cursorStyle: 'line',
+    cursorStyle: "line",
     automaticLayout: true,
-    theme: 'vs-dark',
+    theme: "vs-dark",
   };
 
-  // State for toggling visibility of files
-  const [isFilesVisible, setIsFilesVisible] = useState(false);
+  const defaultProject = useSelector((state) => state.defaultProject);
 
-  // State for toggling visibility of source control
-  const [isSourceControlVisible, setIsSourceControlVisible] = useState(false);
 
-  // Function to toggle visibility of files
-  const toggleFilesVisibility = () => {
-    setIsFilesVisible(!isFilesVisible);
-  };
+  const [files, setFiles] = useState([]);
+  const [fileModel, setFileModel] = useState(false);
+  const [gitModel, setGitModel] = useState(false);
+  const [content, setContent] = useState("");
 
-  // Function to toggle visibility of source control
-  const toggleSourceControlVisibility = () => {
-    setIsSourceControlVisible(!isSourceControlVisible);
-  };
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const filesData = await fetchFiles();
+        setFiles(filesData);
+      } catch (error) {
+        console.error("Error fetching Files:", error);
+        throw error;
+      }
+    }
+    fetchData();
+  }, []);
 
+  // Test on one file
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const fileData = await fetchFile("test2", "readme.md");
+        setContent(fileData);
+      } catch (error) {
+        console.error("Error fetching File:", error);
+        throw error;
+      }
+    }
+    fetchData();
+  });
   return (
     <div className="flex bg-gray-100">
-      <div className="w-1/5 bg-gray-900 text-white">
-        <div className="p-6">
-          <h2 className="text-xl font-bold mb-4">Explorer</h2>
-          <div className="mb-4">
-            <button
-              className="flex items-center mb-2 text-white opacity-75 hover:opacity-100"
-              onClick={toggleFilesVisibility}
-            >
-              <span className="w-4 h-4 mr-2"></span>
-              Files
-            </button>
-            {/* Conditionally render files if visible */}
-            {isFilesVisible && (
-              <div className="pl-4">
-                <p className="text-gray-400">Project Name</p>
-                <ul className="mt-2">
-                  <li className="flex items-center mb-1">
-                    <span className="w-4 h-4 mr-2"></span>
-                    File 1
-                  </li>
-                  <li className="flex items-center mb-1">
-                    <span className="w-4 h-4 mr-2"></span>
-                    File 2
-                  </li>
-                  <li className="flex items-center mb-1">
-                    <span className="w-4 h-4 mr-2"></span>
-                    File 3
-                  </li>
-                </ul>
-              </div>
-            )}
-          </div>
-          <div>
-            <button
-              className="flex items-center mb-2 text-white opacity-75 hover:opacity-100"
-              onClick={toggleSourceControlVisibility}
-            >
-              <span className="w-4 h-4 mr-2"></span>
-              Source Control
-            </button>
-            {/* Conditionally render source control if visible */}
-            {isSourceControlVisible && (
-              <div className="pl-4">
-                <ul className="mt-2">
-                  <li className="flex items-center mb-1">
-                    <span className="w-4 h-4 mr-2"></span>
-                    Repository 1
-                  </li>
-                  <li className="flex items-center mb-1">
-                    <span className="w-4 h-4 mr-2"></span>
-                    Repository 2
-                  </li>
-                  <li className="flex items-center mb-1">
-                    <span className="w-4 h-4 mr-2"></span>
-                    Repository 3
-                  </li>
-                </ul>
-              </div>
-            )}
-          </div>
+      <div className="w-14 bg-gray-950 flex flex-col content-center border-r border-gray-700">
+        <div
+          className={`p-3 hover:bg-slate-400 ${
+            fileModel ? "border-l-4 border-blue-500" : ""
+          }`}
+          onClick={() => {
+            setFileModel(!fileModel);
+            setGitModel(false);
+          }}
+        >
+          <AiOutlineFile color="white" size={30} />
+        </div>
+        <div
+          className={`p-3 hover:bg-slate-400 ${
+            gitModel ? "border-l-4 border-blue-500" : ""
+          }`}
+          onClick={() => {
+            setGitModel(!gitModel);
+            setFileModel(false);
+          }}
+        >
+          <SiGithubactions color="white" size={30} />
         </div>
       </div>
+
+      {/* File Model */}
+      {fileModel && (
+        <div className="flex-none w-1/4 bg-gray-950 border-r border-gray-700 p-3">
+          <h1 className="text-white text-lg">File Explorer</h1>
+          <ul className="text-white">
+            <li className="flex">
+              <AiOutlineFile color="white" />
+              Readme.md
+            </li>
+            {/* {files.map((file) => (
+              <li
+                key={file.name}
+                className="flex cursor-pointer"
+                onClick={async () => {
+                  try {
+                    const fileData = await fetchFile("test2", file.name);
+                    setContent(fileData);
+                    setFile(file.name); // Store the currently displayed file
+                  } catch (error) {
+                    console.error("Error fetching File:", error);
+                  }
+                }}
+              >
+                <AiOutlineFile color="white" />
+                {file.name}
+              </li>
+            ))} */}
+          </ul>
+        </div>
+      )}
+      {/* Git Model */}
+      {gitModel && (
+        <div className="flex-none w-1/4 bg-gray-950 border-r border-gray-700 p-3">
+          <h1 className="text-white text-lg">Git</h1>
+          {/* Add your Git content here */}
+        </div>
+      )}
       <div className="flex-1 bg-gray-800">
         <MonacoEditor
           width="100%"
@@ -99,7 +127,7 @@ const CodeEditor = () => {
           language="javascript"
           theme="vs-dark"
           options={editorOptions}
-          value="// Start coding here..."
+          value={content}
         />
       </div>
     </div>
