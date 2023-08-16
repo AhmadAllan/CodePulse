@@ -1,11 +1,9 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { setDefaultProject, clearDefaultProject } from "../slices/defaultProjectSlice";
+import { setDefaultProject } from "../slices/defaultProjectSlice";
 import {
   fetchAllProjects,
-  fetchProjectById,
   createProject,
-  updateProjectStatus,
   deleteProject,
 } from "../services/projectService";
 
@@ -27,13 +25,14 @@ const ProjectPage = () => {
       try {
         const projectData = await fetchAllProjects();
         setProjects(projectData);
+        console.log(defaultProject);
       } catch (error) {
         console.error("Error fetching projects:", error);
         throw error;
       }
     }
     fetchData();
-  }, []);
+  }, [defaultProject]);
 
   const [selectedProjectId, setSelectedProjectId] = useState(null);
 

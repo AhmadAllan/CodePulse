@@ -67,7 +67,7 @@ const getProject = expressAsyncHandler(async (req, res) => {
   const project = await Project.findById(projectId).populate('createdBy', 'name');
   if (project) {
     
-    const files = await fetchFiles(project.createdBy.name, project.name)
+    const files = await fetchFiles(project.name)
     
     if (typeof files === 'undefined' || files === '0') {
       // No content in the repository

@@ -3,12 +3,11 @@ import { useSelector } from "react-redux";
 import { AiOutlineFile } from "react-icons/ai";
 import { SiGithubactions } from "react-icons/si";
 import {
-  getRepository,
-  getUser,
   fetchFile,
-  fetchFiles,
-  updateFile
 } from "../services/githubService";
+import {
+  fetchProjectById,
+} from "../services/projectService"
 import MonacoEditor from "react-monaco-editor";
 
 const CodeEditor = () => {
@@ -26,6 +25,7 @@ const CodeEditor = () => {
 
 
   const [files, setFiles] = useState([]);
+  const [project, setProject] = useState(null);
   const [fileModel, setFileModel] = useState(false);
   const [gitModel, setGitModel] = useState(false);
   const [content, setContent] = useState("");
@@ -33,29 +33,39 @@ const CodeEditor = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const filesData = await fetchFiles();
-        setFiles(filesData);
+        const projectData = await fetchProjectById(defaultProject.defaultProject);
+        setProject(projectData.projectInfo);
       } catch (error) {
         console.error("Error fetching Files:", error);
         throw error;
       }
     }
     fetchData();
-  }, []);
+  }, [defaultProject]);
 
-  // Test on one file
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        const fileData = await fetchFile("test2", "readme.md");
-        setContent(fileData);
-      } catch (error) {
-        console.error("Error fetching File:", error);
-        throw error;
-      }
+  // // Test on one file
+  // useEffect(() => {
+  //   async function fetchData() {
+  //     try {
+  //       const fileData = await fetchFile("test2", "readme.md");
+  //       setContent(fileData);
+  //     } catch (error) {
+  //       console.error("Error fetching File:", error);
+  //       throw error;
+  //     }
+  //   }
+  //   fetchData();
+  // });
+
+  async function fetchFileData(fileName) {
+    try {
+      const fileData = await fetchFile(project.project.name, fileName);
+      setContent(fileData);
+    } catch (error) {
+      console.error("Error fetching File:", error);
+      throw error;
     }
-    fetchData();
-  });
+  }
   return (
     <div className="flex bg-gray-100">
       <div className="w-14 bg-gray-950 flex flex-col content-center border-r border-gray-700">
@@ -88,28 +98,13 @@ const CodeEditor = () => {
         <div className="flex-none w-1/4 bg-gray-950 border-r border-gray-700 p-3">
           <h1 className="text-white text-lg">File Explorer</h1>
           <ul className="text-white">
-            <li className="flex">
-              <AiOutlineFile color="white" />
-              Readme.md
-            </li>
-            {/* {files.map((file) => (
-              <li
-                key={file.name}
-                className="flex cursor-pointer"
-                onClick={async () => {
-                  try {
-                    const fileData = await fetchFile("test2", file.name);
-                    setContent(fileData);
-                    setFile(file.name); // Store the currently displayed file
-                  } catch (error) {
-                    console.error("Error fetching File:", error);
-                  }
-                }}
-              >
+            { project.files.map(file => (
+              <li key={file} className="flex gap-x-1.5 items-center p-1 hover:cursor-pointer hover:bg-gray-400" onClick={() => fetchFileData(file)} >
                 <AiOutlineFile color="white" />
-                {file.name}
+                {file}
               </li>
-            ))} */}
+            ))}
+
           </ul>
         </div>
       )}

@@ -1,11 +1,18 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const initialState = {
+  defaultProject: localStorage.getItem("defaultProject")
+    ? JSON.parse(localStorage.getItem("defaultProject"))
+    : null,
+};
+
 const defaultProjectSlice = createSlice({
   name: "defaultProject",
-  initialState: null,
+  initialState,
   reducers: {
     setDefaultProject: (state, action) => {
-      return action.payload;
+      state.defaultProject = action.payload;
+      localStorage.setItem('defaultProject', JSON.stringify(action.payload));
     },
     clearDefaultProject: (state) => {
       return null;

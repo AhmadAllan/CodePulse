@@ -39,15 +39,11 @@ export const deleteProject = async (projectId) => {
   }
 };
 
-export const updateProjectStatus = async (projectId, newName, newDescription, newMembers) => {
+export const updateProject = async (projectId, projectData) => {
   try {
-    await axios.put(`/api/projects/${projectId}`, {
-        name: newName,
-        description: newDescription,
-        members: newMembers,
-      });
+    await axios.put(`/api/projects/${projectId}`, projectData)
   } catch (error) {
-    console.error("Error updating project status:", error);
+    console.error("Error updating project:", error);
     throw error;
   }
 };
