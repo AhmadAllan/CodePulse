@@ -1,13 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { AiOutlineFile } from "react-icons/ai";
+import { AiOutlineFile, AiOutlineSave } from "react-icons/ai";
 import { SiGithubactions } from "react-icons/si";
-import {
-  fetchFile,
-} from "../services/githubService";
-import {
-  fetchProjectById,
-} from "../services/projectService"
+import { fetchFile } from "../services/githubService";
+import { fetchProjectById, updateProject } from "../services/projectService";
 import MonacoEditor from "react-monaco-editor";
 
 const CodeEditor = () => {
@@ -20,20 +16,23 @@ const CodeEditor = () => {
     automaticLayout: true,
     theme: "vs-dark",
   };
+  const editorRef = useRef(null);
 
   const defaultProject = useSelector((state) => state.defaultProject);
 
-
-  const [files, setFiles] = useState([]);
   const [project, setProject] = useState(null);
   const [fileModel, setFileModel] = useState(false);
   const [gitModel, setGitModel] = useState(false);
   const [content, setContent] = useState("");
+  const [file, setFile] = useState("");
+  const [commitMessage, setCommitMessage] = useState("");
 
   useEffect(() => {
     async function fetchData() {
       try {
-        const projectData = await fetchProjectById(defaultProject.defaultProject);
+        const projectData = await fetchProjectById(
+          defaultProject.defaultProject
+        );
         setProject(projectData.projectInfo);
       } catch (error) {
         console.error("Error fetching Files:", error);
@@ -43,32 +42,40 @@ const CodeEditor = () => {
     fetchData();
   }, [defaultProject]);
 
-  // // Test on one file
-  // useEffect(() => {
-  //   async function fetchData() {
-  //     try {
-  //       const fileData = await fetchFile("test2", "readme.md");
-  //       setContent(fileData);
-  //     } catch (error) {
-  //       console.error("Error fetching File:", error);
-  //       throw error;
-  //     }
-  //   }
-  //   fetchData();
-  // });
-
-  async function fetchFileData(fileName) {
+  const fetchFileData = async (fileName) => {
     try {
       const fileData = await fetchFile(project.project.name, fileName);
       setContent(fileData);
+      setFile(fileName);
+      console.log(fileName);
     } catch (error) {
       console.error("Error fetching File:", error);
       throw error;
     }
-  }
+  };
+
+  const saveFile = async () => {
+    try {
+      const projectData = {
+        name: project.project.name,
+        newFileContent: editorRef.current.getValue(),
+        updatedFile: file,
+        commitMessage: commitMessage,
+      };
+
+      await updateProject(project.project.id, projectData);
+    } catch (error) {
+      console.error("Error update file:", error);
+      throw error;
+    }
+  };
+
+  const handleEditorDidMount = (editor, monaco) => {
+    editorRef.current = editor;
+  };
   return (
     <div className="flex bg-gray-100">
-      <div className="w-14 bg-gray-950 flex flex-col content-center border-r border-gray-700">
+      <div className="w-14 bg-gray-950 flex flex-col content-center border-r-2 border-gray-700">
         <div
           className={`p-3 hover:bg-slate-400 ${
             fileModel ? "border-l-4 border-blue-500" : ""
@@ -91,28 +98,59 @@ const CodeEditor = () => {
         >
           <SiGithubactions color="white" size={30} />
         </div>
+        <div
+          className={
+            "p-3 mt-6 bg-blue-400 hover:bg-blue-500 hover:cursor-pointer"
+          }
+        >
+          <AiOutlineSave color="white" size={30} />
+        </div>
       </div>
 
       {/* File Model */}
       {fileModel && (
-        <div className="flex-none w-1/4 bg-gray-950 border-r border-gray-700 p-3">
+        <div className="flex-none w-1/6 bg-gray-950 border-r border-gray-700 p-3">
           <h1 className="text-white text-lg">File Explorer</h1>
           <ul className="text-white">
-            { project.files.map(file => (
-              <li key={file} className="flex gap-x-1.5 items-center p-1 hover:cursor-pointer hover:bg-gray-400" onClick={() => fetchFileData(file)} >
+            {project.files.map((file) => (
+              <li
+                key={file}
+                className="flex gap-x-1.5 items-center p-1 hover:cursor-pointer hover:bg-gray-400"
+                onClick={() => fetchFileData(file)}
+              >
                 <AiOutlineFile color="white" />
                 {file}
               </li>
             ))}
-
           </ul>
         </div>
       )}
       {/* Git Model */}
       {gitModel && (
-        <div className="flex-none w-1/4 bg-gray-950 border-r border-gray-700 p-3">
+        <div className="flex-none w-1/6 bg-gray-950 border-r border-gray-700 p-3">
           <h1 className="text-white text-lg">Git</h1>
-          {/* Add your Git content here */}
+          <form>
+              <div className="my-2">
+                <label htmlFor="commit" className="block mb-1">
+                  Commit Message
+                </label>
+                <input
+                  type="text"
+                  id="commit"
+                  placeholder="Enter commit message"
+                  className="w-full px-4 py-2 border border-gray-300 rounded"
+                  value={commitMessage}
+                  onChange={(e) => setCommitMessage(e.target.value)}
+                />
+              </div>
+              <button
+                type="button"
+                className="w-full bg-blue-500 text-white px-4 py-2 rounded mt-3"
+                onClick={saveFile}
+              >
+                commit
+              </button>
+            </form>
         </div>
       )}
       <div className="flex-1 bg-gray-800">
@@ -123,6 +161,7 @@ const CodeEditor = () => {
           theme="vs-dark"
           options={editorOptions}
           value={content}
+          editorDidMount={handleEditorDidMount}
         />
       </div>
     </div>
