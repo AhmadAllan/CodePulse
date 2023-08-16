@@ -131,7 +131,6 @@ const updateProject = expressAsyncHandler(async (req, res) => {
       Authorization: `Bearer ${process.env.tokenCreate}`,
     },
   });
-  console.log(response.data.login);
     const owner = response.data.login;
     const repo = project.name
     // Convert members to an array, even if only one member is provided
@@ -163,7 +162,7 @@ const updateProject = expressAsyncHandler(async (req, res) => {
       }
     }
 
-    //create file 
+    //create file with content
     if (newFileContent && createdFile && commitMessage) {
       
       try {
@@ -175,6 +174,17 @@ const updateProject = expressAsyncHandler(async (req, res) => {
       }
     }
 
+    //create file without content
+    if (createdFile && commitMessage) {
+      
+      try {
+        const createFileResponse = await createFile(repo, createdFile,"" ,commitMessage);
+        console.log('File created:', createFileResponse);
+      } catch (error) {
+        console.error('Error creating file:', error);
+        throw new error
+      }
+    }
     //delete file
     if(deletedFile) {
       try {

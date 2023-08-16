@@ -25,8 +25,10 @@ const CodeEditor = () => {
   const [gitModel, setGitModel] = useState(false);
   const [content, setContent] = useState("");
   const [file, setFile] = useState("");
+  const [newFile, setNewFile] = useState("");
+  const [showInput, setShowInput] = useState(false);
   const [commitMessage, setCommitMessage] = useState("");
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState("");
 
   useEffect(() => {
     async function fetchData() {
@@ -55,6 +57,31 @@ const CodeEditor = () => {
     }
   };
 
+  const createFile = async () => {
+    try {
+      const projectData = {
+        name: project.project.name,
+        createdFile: newFile,
+        newFileContent: editorRef.current.getValue(),
+        commitMessage: commitMessage,
+      };
+
+      // Update project's files in state after creation
+      const updatedFiles = [...project.files, newFile];
+      setProject((prevProject) => ({
+        ...prevProject,
+        files: updatedFiles,
+      }));
+      
+      setSelectedFile(newFile);
+
+      await updateProject(project.project.id, projectData);
+    } catch (error) {
+      console.error("Error creating file:", error);
+      throw error;
+    }
+  };
+
   const saveFile = async () => {
     try {
       const projectData = {
@@ -64,15 +91,12 @@ const CodeEditor = () => {
         commitMessage: commitMessage,
       };
 
+
       await updateProject(project.project.id, projectData);
     } catch (error) {
-      console.error("Error update file:", error);
+      console.error("Error creating file:", error);
       throw error;
     }
-  };
-
-  const handleEditorDidMount = (editor, monaco) => {
-    editorRef.current = editor;
   };
 
   const handleDeleteFile = async (fileName) => {
@@ -87,15 +111,23 @@ const CodeEditor = () => {
         ...prevProject,
         files: updatedFiles,
       }));
-      
-      setSelectedFile(null);
 
-      const updatedProject = await updateProject(project.project.id, projectData);
+      setSelectedFile("");
+      setContent("");
+
+      const updatedProject = await updateProject(
+        project.project.id,
+        projectData
+      );
       console.log("response", updatedProject);
     } catch (error) {
       console.error("Error update file:", error);
       throw error;
     }
+  };
+
+  const handleEditorDidMount = (editor, monaco) => {
+    editorRef.current = editor;
   };
 
   return (
@@ -108,6 +140,8 @@ const CodeEditor = () => {
           onClick={() => {
             setFileModel(!fileModel);
             setGitModel(false);
+            setCommitMessage("");
+            setNewFile("")
           }}
         >
           <AiOutlineFile color="white" size={30} />
@@ -119,6 +153,8 @@ const CodeEditor = () => {
           onClick={() => {
             setGitModel(!gitModel);
             setFileModel(false);
+            setShowInput(false)
+            setCommitMessage("");
           }}
         >
           <SiGithubactions color="white" size={30} />
@@ -136,6 +172,56 @@ const CodeEditor = () => {
       {fileModel && (
         <div className="flex-none w-1/6 bg-gray-950 border-r border-gray-700 p-3">
           <h1 className="text-white text-lg">File Explorer</h1>
+          {showInput ? (
+            <form>
+            <div className="my-2">
+              <input
+                type="text"
+                id="fileName"
+                placeholder="Enter Project Name"
+                className="text-white w-full px-2 border border-gray-300 rounded bg-transparent"
+                value={newFile}
+                onChange={(e) => setNewFile(e.target.value)}
+              />
+            </div>
+            <div className="my-2">
+              <input
+              type="text"
+                id="commit"
+                placeholder="Enter commit"
+                className="text-white w-full px-2 border border-gray-300 rounded bg-transparent"
+                value={commitMessage}
+                onChange={(e) => setCommitMessage(e.target.value)}
+              />
+            </div>
+            
+            <button
+              type="button"
+              className="bg-blue-500 text-white px-4 py-2 rounded mt-3"
+              onClick={() => {
+                setShowInput(false);
+                createFile();
+              }}
+            >
+              Create File
+            </button>
+            <button
+              type="button"
+              className="bg-gray-500 text-white px-4 py-2 rounded mt-3 ml-2"
+              onClick={() => setShowInput(false)}
+            >
+              Cancel
+            </button>
+          </form>
+          ) : (
+            <button
+              type="button"
+              className="w-full bg-blue-500 text-white px-4 py-1 rounded mt-3"
+              onClick={() => setShowInput(true)}
+            >
+              Create File
+            </button>
+          )}
           <ul className="text-white">
             {project.files.map((file) => (
               <li
@@ -170,22 +256,22 @@ const CodeEditor = () => {
           <h1 className="text-white text-lg">Git</h1>
           <form>
             <div className="my-2">
-              <label htmlFor="commit" className="block mb-1">
-                Commit Message
-              </label>
               <input
                 type="text"
                 id="commit"
                 placeholder="Enter commit message"
-                className="w-full px-4 py-2 border border-gray-300 rounded"
+                className="text-white w-full px-2 border border-gray-300 rounded bg-transparent"
                 value={commitMessage}
                 onChange={(e) => setCommitMessage(e.target.value)}
               />
             </div>
             <button
               type="button"
-              className="w-full bg-blue-500 text-white px-4 py-2 rounded mt-3"
-              onClick={saveFile}
+              className="w-full bg-blue-500 text-white px-4 py-1 rounded mt-3"
+              onClick={() => {
+                setCommitMessage("");
+                saveFile()
+              }}
             >
               commit
             </button>
