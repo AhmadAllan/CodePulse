@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { AiOutlineFile, AiOutlineSave } from "react-icons/ai";
+import { AiOutlineFile, AiOutlineSave, AiFillDelete } from "react-icons/ai";
 import { SiGithubactions } from "react-icons/si";
 import { fetchFile } from "../services/githubService";
 import { fetchProjectById, updateProject } from "../services/projectService";
@@ -26,6 +26,7 @@ const CodeEditor = () => {
   const [content, setContent] = useState("");
   const [file, setFile] = useState("");
   const [commitMessage, setCommitMessage] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -73,6 +74,30 @@ const CodeEditor = () => {
   const handleEditorDidMount = (editor, monaco) => {
     editorRef.current = editor;
   };
+
+  const handleDeleteFile = async (fileName) => {
+    try {
+      const projectData = {
+        name: project.project.name,
+        deletedFile: fileName,
+      };
+
+      const updatedFiles = project.files.filter((file) => file !== fileName);
+      setProject((prevProject) => ({
+        ...prevProject,
+        files: updatedFiles,
+      }));
+      
+      setSelectedFile(null);
+
+      const updatedProject = await updateProject(project.project.id, projectData);
+      console.log("response", updatedProject);
+    } catch (error) {
+      console.error("Error update file:", error);
+      throw error;
+    }
+  };
+
   return (
     <div className="flex bg-gray-100">
       <div className="w-14 bg-gray-950 flex flex-col content-center border-r-2 border-gray-700">
@@ -115,11 +140,25 @@ const CodeEditor = () => {
             {project.files.map((file) => (
               <li
                 key={file}
-                className="flex gap-x-1.5 items-center p-1 hover:cursor-pointer hover:bg-gray-400"
-                onClick={() => fetchFileData(file)}
+                className={`flex gap-x-1.5 items-center p-1 my-1 hover:bg-gray-400 hover:cursor-pointer ${
+                  file === selectedFile ? "bg-gray-400" : ""
+                }`}
+                onClick={() => {
+                  fetchFileData(file);
+                  setSelectedFile(file); // Set the selected file
+                }}
               >
                 <AiOutlineFile color="white" />
                 {file}
+                <AiFillDelete
+                  color="red"
+                  size={20}
+                  className="ml-auto hover:bg-slate-300 "
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent the parent onClick event
+                    handleDeleteFile(file);
+                  }}
+                />
               </li>
             ))}
           </ul>
@@ -130,27 +169,27 @@ const CodeEditor = () => {
         <div className="flex-none w-1/6 bg-gray-950 border-r border-gray-700 p-3">
           <h1 className="text-white text-lg">Git</h1>
           <form>
-              <div className="my-2">
-                <label htmlFor="commit" className="block mb-1">
-                  Commit Message
-                </label>
-                <input
-                  type="text"
-                  id="commit"
-                  placeholder="Enter commit message"
-                  className="w-full px-4 py-2 border border-gray-300 rounded"
-                  value={commitMessage}
-                  onChange={(e) => setCommitMessage(e.target.value)}
-                />
-              </div>
-              <button
-                type="button"
-                className="w-full bg-blue-500 text-white px-4 py-2 rounded mt-3"
-                onClick={saveFile}
-              >
-                commit
-              </button>
-            </form>
+            <div className="my-2">
+              <label htmlFor="commit" className="block mb-1">
+                Commit Message
+              </label>
+              <input
+                type="text"
+                id="commit"
+                placeholder="Enter commit message"
+                className="w-full px-4 py-2 border border-gray-300 rounded"
+                value={commitMessage}
+                onChange={(e) => setCommitMessage(e.target.value)}
+              />
+            </div>
+            <button
+              type="button"
+              className="w-full bg-blue-500 text-white px-4 py-2 rounded mt-3"
+              onClick={saveFile}
+            >
+              commit
+            </button>
+          </form>
         </div>
       )}
       <div className="flex-1 bg-gray-800">
