@@ -121,10 +121,31 @@ const updateUserProfile = expressAsyncHandler(async (req, res) => {
   }
 });
 
+// @desc Search users by name or email
+// @route GET /api/users/search
+// @access Private (or Public, depending on your use case)
+const searchUsers = expressAsyncHandler(async (req, res) => {
+  const searchTerm = req.query.q; // Get the search term from the query parameter
+
+  const users = await User.find({
+    $or: [
+      { name: { $regex: searchTerm, $options: "i" } }, 
+      { email: { $regex: searchTerm, $options: "i" } },
+    ],
+  });
+
+  if (users.length === 0) {
+    res.status(404).json({ message: "No users found matching the search term" });
+  } else {
+    res.status(200).json(users);
+  }
+});
+
 export {
   authUser,
   registerUser,
   logoutUser,
   getUserProfile,
   updateUserProfile,
+  searchUsers
 };
