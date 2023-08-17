@@ -15,7 +15,8 @@ const defaultProjectSlice = createSlice({
       localStorage.setItem('defaultProject', JSON.stringify(action.payload));
     },
     clearDefaultProject: (state) => {
-      return null;
+      state.defaultProject = null;
+      localStorage.removeItem('defaultProject');
     },
   },
 });

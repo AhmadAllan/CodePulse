@@ -32,7 +32,7 @@ const ProjectPage = () => {
       }
     }
     fetchData();
-  }, [defaultProject]);
+  }, []);
 
   const [selectedProjectId, setSelectedProjectId] = useState(null);
 

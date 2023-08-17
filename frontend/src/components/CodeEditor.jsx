@@ -130,6 +130,10 @@ const CodeEditor = () => {
     editorRef.current = editor;
   };
 
+  if (!project) {
+    return <div>Loading...</div>; // or any loading indicator you prefer
+  }
+
   return (
     <div className="flex bg-gray-100">
       <div className="w-14 bg-gray-950 flex flex-col content-center border-r-2 border-gray-700">
