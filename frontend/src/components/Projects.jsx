@@ -6,7 +6,7 @@ import {
   createProject,
   deleteProject,
 } from "../services/projectService";
-
+import UserSearch from "./UserSearch";
 
 const ProjectPage = () => {
   const dispatch = useDispatch();
@@ -69,7 +69,9 @@ const ProjectPage = () => {
     }
   };
 
-  // TODO: see if you need to add updateProject and fetchProjectById
+  const handleUserSelect = (selectedUser) => {
+    setMembers([...members, selectedUser]);
+  };
 
   const selectedProject = projects.find(
     (project) => project._id === selectedProjectId
@@ -132,18 +134,22 @@ const ProjectPage = () => {
         <div className="w-3/4 bg-white rounded-lg shadow-md p-6">
           <div>
             {selectedProject ? (
-                  <div className="flex justify-between">
-                    <h1 className="text-3xl font-bold text-gray-800 mb-6">{selectedProject.name}</h1>
-                    <button
-                      onClick={() => handleProjectDelete(selectedProjectId)}
-                      className="text-red-500 hover:text-red-600 focus:outline-none"
-                    >
-                      Delete
-                    </button>
-                  </div>
-              ) : (
-                <h1 className="text-3xl font-bold text-gray-800 mb-6">Select a Project</h1>
-              )}
+              <div className="flex justify-between">
+                <h1 className="text-3xl font-bold text-gray-800 mb-6">
+                  {selectedProject.name}
+                </h1>
+                <button
+                  onClick={() => handleProjectDelete(selectedProjectId)}
+                  className="text-red-500 hover:text-red-600 focus:outline-none"
+                >
+                  Delete
+                </button>
+              </div>
+            ) : (
+              <h1 className="text-3xl font-bold text-gray-800 mb-6">
+                Select a Project
+              </h1>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-6">
             <div className="bg-blue-500 text-white rounded-lg p-4 flex items-center justify-between">
@@ -220,21 +226,32 @@ const ProjectPage = () => {
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
+              <UserSearch onSelect={handleUserSelect} />
               <div className="my-2">
                 <label htmlFor="members" className="block mb-1">
                   Members
                 </label>
-                {/* TODO: see how you will handle members add */}
                 <select
                   id="members"
                   multiple
                   className="w-full px-4 py-2 border border-gray-300 rounded"
                   value={members}
+                  onChange={(e) =>
+                    setMembers(
+                      Array.from(
+                        e.target.selectedOptions,
+                        (option) => option.value
+                      )
+                    )
+                  }
                 >
-                  {/* ... Fetch and display available members here ... */}
+                  {members.map((member) => (
+                    <option key={member._id} value={member._id}>
+                      {member.name}
+                    </option>
+                  ))}
                 </select>
               </div>
-              {/* ... Add more input fields for other project details as needed ... */}
               <button
                 type="button"
                 className="bg-blue-500 text-white px-4 py-2 rounded mt-3"

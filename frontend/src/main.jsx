@@ -22,6 +22,7 @@ import CodeReview from "./components/CodeReview";
 import TaskManagement from "./components/TaskManagement";
 import ProfilePage from "./components/ProfilePage";
 import PrivateRoute from "./utils/PrivateRoute";
+import UserSearch from "./components/UserSearch";
 
 // Create a BrowserRouter instance
 const router = createBrowserRouter(
@@ -42,6 +43,7 @@ const router = createBrowserRouter(
         <Route path="/codeReview" element={<CodeReview />} />
         <Route path="/taskManagement" element={<TaskManagement />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/user-search" element={<UserSearch />} />
       </Route>
     </Route>
   )
