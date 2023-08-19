@@ -8,6 +8,7 @@ import FormContainer from "../components/FormContainer";
 
 const Register = () => {
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -62,7 +63,7 @@ const Register = () => {
       <h1 className="text-2xl font-bold">Sign Up</h1>
 
       <form onSubmit={submitHandler}>
-        <div className="my-2">
+      <div className="my-2">
           <label htmlFor="name" className="block mb-1">
             Your Name
           </label>
@@ -73,6 +74,20 @@ const Register = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded"
             value={name}
             onChange={(e) => setName(e.target.value)}
+          />
+        </div>
+
+        <div className="my-2">
+          <label htmlFor="username" className="block mb-1">
+            username
+          </label>
+          <input
+            type="text"
+            id="username"
+            placeholder="Enter username"
+            className="w-full px-4 py-2 border border-gray-300 rounded"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
           />
         </div>
 
@@ -118,13 +133,13 @@ const Register = () => {
           />
         </div>
         <div className="mb-4">
-          <label className="block text-gray-700 font-medium mb-2">
+          <label className="block mb-1">
             GitHub Token
           </label>
 
           <input
             type="token"
-            className="border p-2 w-full"
+            className="w-full px-4 py-2 border border-gray-300 rounded"
             value={token}
             onChange={(e) => setToken(e.target.value)}
           />

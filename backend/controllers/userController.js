@@ -16,7 +16,7 @@ const authUser = expressAsyncHandler(async (req, res) => {
     res.status(201).json({
       _id: user._id,
       name: user.name,
-      userName: user.userName,
+      username: user.username,
       email: user.email,
       token: user.token,
       country: user.country,
