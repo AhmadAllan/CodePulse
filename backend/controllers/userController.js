@@ -1,6 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
+import { getToken } from "./githubController.js";
 
 // @desc Auth user/set token
 // @route POST /api/users/auth
@@ -11,6 +12,7 @@ const authUser = expressAsyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
   if (user && (await user.matchPassword(password))) {
     generateToken(res, user._id);
+    getToken(user.token)
     res.status(201).json({
       _id: user._id,
       name: user.name,
@@ -31,7 +33,7 @@ const authUser = expressAsyncHandler(async (req, res) => {
 // route POST /api/users
 // @access Public
 const registerUser = expressAsyncHandler(async (req, res) => {
-  const { name, email, password, country, gender, edu } = req.body;
+  const { name, userName, email, password, country, gender, edu, token } = req.body;
 
   const userExist = await User.findOne({ email });
 
@@ -42,17 +44,20 @@ const registerUser = expressAsyncHandler(async (req, res) => {
 
   const user = await User.create({
     name,
+    userName,
     email,
     password,
     country,
     gender,
     edu,
+    token
   });
 
   if (user) {
     generateToken(res, user._id);
     res.status(201).json({
       _id: user._id,
+      userName: user.user,
       name: user.name,
       email: user.email,
       country: user.country,
