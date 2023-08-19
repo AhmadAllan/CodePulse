@@ -38,8 +38,10 @@ const Register = () => {
       try {
         const userData = {
           name,
+          username,
           email,
           password,
+          token,
           country,
           gender,
           edu,

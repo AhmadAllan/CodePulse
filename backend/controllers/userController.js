@@ -33,7 +33,7 @@ const authUser = expressAsyncHandler(async (req, res) => {
 // route POST /api/users
 // @access Public
 const registerUser = expressAsyncHandler(async (req, res) => {
-  const { name, userName, email, password, country, gender, edu, token } = req.body;
+  const { name, username, email, password, country, gender, edu, token } = req.body;
 
   const userExist = await User.findOne({ email });
 
@@ -44,7 +44,7 @@ const registerUser = expressAsyncHandler(async (req, res) => {
 
   const user = await User.create({
     name,
-    userName,
+    username,
     email,
     password,
     country,
