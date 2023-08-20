@@ -3,16 +3,22 @@ import User from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
 import { getToken } from "./githubController.js";
 
+
+const getTokenUserAuth = expressAsyncHandler(async(req, res, token) => {
+  //const token = req.user.token;
+  getToken(token)
+  console.log('success')
+})
+
 // @desc Auth user/set token
 // @route POST /api/users/auth
 // @access Public
 const authUser = expressAsyncHandler(async (req, res) => {
   const { email, password } = req.body;
-
   const user = await User.findOne({ email });
   if (user && (await user.matchPassword(password))) {
     generateToken(res, user._id);
-    getToken(user.token)
+    getTokenUserAuth(req, res, user.token);
     res.status(201).json({
       _id: user._id,
       name: user.name,
@@ -53,6 +59,7 @@ const registerUser = expressAsyncHandler(async (req, res) => {
     token
   });
 
+
   if (user) {
     generateToken(res, user._id);
     res.status(201).json({
@@ -64,6 +71,7 @@ const registerUser = expressAsyncHandler(async (req, res) => {
       gender: user.gender,
       edu: user.edu,
     });
+    authUser(req , res)
   } else {
     res.status(400);
     throw new Error("Invalid user data");
@@ -78,6 +86,7 @@ const logoutUser = expressAsyncHandler(async (req, res) => {
     httpOnly: true,
     expires: new Date(0),
   });
+  getTokenUserAuth(req, res, null)
   res.status(200).json({ message: "User logged out" });
 });
 
@@ -154,5 +163,6 @@ export {
   logoutUser,
   getUserProfile,
   updateUserProfile,
-  searchUsers
+  searchUsers,
+  getTokenUserAuth
 };
