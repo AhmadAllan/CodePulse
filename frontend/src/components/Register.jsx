@@ -49,7 +49,7 @@ const Register = () => {
 
         const res = await register(userData).unwrap();
         dispatch(setCredentials({ ...res }));
-        navigate("/");
+        navigate("/otp-verification", { state: userData });
       } catch (err) {
         toast.error(err?.data?.message || err.error);
       }

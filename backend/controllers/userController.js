@@ -2,13 +2,31 @@ import expressAsyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
 import { getToken } from "./githubController.js";
+import sendEmail from "../utils/sendEmail.js";
+import otpGenerator from "otp-generator";
 
+let OTPs 
 
 const getTokenUserAuth = expressAsyncHandler(async(req, res, token) => {
   //const token = req.user.token;
   getToken(token)
   console.log('success')
 })
+
+const generateOtp = () => {
+  const otp = otpGenerator.generate(6, { digits: true, upperCase: false, specialChars: false });
+  OTPs = otp; // Store the OTP for verification
+  console.log("3-",OTPs, otp);
+}
+
+const verifyOtp = (otp) => {
+  const storedOtp = OTPs;
+  console.log("1-",storedOtp, OTPs,otp,storedOtp === otp );
+  if (storedOtp && storedOtp === otp) {
+    return true;
+  }
+  return false;
+};
 
 // @desc Auth user/set token
 // @route POST /api/users/auth
@@ -39,6 +57,7 @@ const authUser = expressAsyncHandler(async (req, res) => {
 // route POST /api/users
 // @access Public
 const registerUser = expressAsyncHandler(async (req, res) => {
+  generateOtp();
   const { name, username, email, password, country, gender, edu, token } = req.body;
 
   const userExist = await User.findOne({ email });
@@ -48,33 +67,59 @@ const registerUser = expressAsyncHandler(async (req, res) => {
     throw new Error("User already exists");
   }
 
-  const user = await User.create({
-    name,
-    username,
-    email,
-    password,
-    country,
-    gender,
-    edu,
-    token
-  });
+  sendEmail(email, OTPs);
 
+  res.status(200).json({ message: "OTP sent successfully" });
+});
 
-  if (user) {
-    generateToken(res, user._id);
-    res.status(201).json({
-      _id: user._id,
-      userName: user.user,
-      name: user.name,
-      email: user.email,
-      country: user.country,
-      gender: user.gender,
-      edu: user.edu,
+// @desc verify
+// route POST /api/users
+// @access Public
+const verifyOtpAndCreateUser = expressAsyncHandler(async (req, res) => {
+  const { email, otp, name, username, password, country, gender, edu, token } = req.body;
+
+  const userExist = await User.findOne({ email });
+
+  if (userExist) {
+    res.status(400);
+    throw new Error("User already exists");
+  }
+  console.log(`2- here the otp: ${OTPs}, ${otp}`);
+  const isValidOtp = verifyOtp(otp);
+
+  if (isValidOtp) {
+    console.log("4- here");
+    const user = await User.create({
+      name,
+      username,
+      email,
+      password,
+      country,
+      gender,
+      edu,
+      token
     });
-    authUser(req , res)
+
+    if (user) {
+      generateToken(res, user._id);
+      getTokenUserAuth(req, res, user.token);
+      res.status(201).json({
+        _id: user._id,
+        name: user.name,
+        username: user.username,
+        email: user.email,
+        token: user.token,
+        country: user.country,
+        gender: user.gender,
+        edu: user.edu,
+      });
+    } else {
+      res.status(400);
+      throw new Error("Invalid user data");
+    }
   } else {
     res.status(400);
-    throw new Error("Invalid user data");
+    throw new Error(`error: ${otp} ${OTPs}`);
   }
 });
 
@@ -160,6 +205,7 @@ const searchUsers = expressAsyncHandler(async (req, res) => {
 export {
   authUser,
   registerUser,
+  verifyOtpAndCreateUser,
   logoutUser,
   getUserProfile,
   updateUserProfile,

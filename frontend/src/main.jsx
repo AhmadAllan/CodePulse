@@ -23,6 +23,7 @@ import TaskManagement from "./components/TaskManagement";
 import ProfilePage from "./components/ProfilePage";
 import PrivateRoute from "./utils/PrivateRoute";
 import UserSearch from "./components/UserSearch";
+import OtpVerification from "./components/OtpVerification";
 
 // Create a BrowserRouter instance
 const router = createBrowserRouter(
@@ -33,6 +34,7 @@ const router = createBrowserRouter(
       <Route index={true} path="/" element={<Hero />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/otp-verification" element={<OtpVerification />} />
       {/* Private Routes */}
       <Route path="" element={<PrivateRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
