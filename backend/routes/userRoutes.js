@@ -5,6 +5,7 @@ import {
   logoutUser,
   getUserProfile,
   updateUserProfile,
+  getTokenUserAuth,
 } from "../controllers/userController.js";
 import { searchUsers } from "../controllers/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
@@ -17,6 +18,7 @@ router.post("/auth", authUser);
 router.post("/logout", logoutUser);
 router.route('/profile').get(protect, getUserProfile).put(protect, updateUserProfile);
 router.get("/search",searchUsers);
+router.get('/get-tokenGithub',protect ,getTokenUserAuth)
 
 
 
