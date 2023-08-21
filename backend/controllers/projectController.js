@@ -67,6 +67,7 @@ const getProject = expressAsyncHandler(async (req, res) => {
   const project = await Project.findById(projectId).populate('createdBy', 'name');
   if (project) {
     
+    
     const files = await fetchFiles(project.name)
     
     if (typeof files === 'undefined' || files === '0') {
@@ -75,7 +76,7 @@ const getProject = expressAsyncHandler(async (req, res) => {
         project: {
           id: project._id,
           name: project.name,
-          createBy: project.createdBy.name
+          createBy: req.user.name
         },
         message: 'No content in the repository',
       });
@@ -88,7 +89,7 @@ const getProject = expressAsyncHandler(async (req, res) => {
           project: {
             id: project._id,
             name: project.name,
-            createBy: project.createdBy.name
+            createBy: req.user.name
           },
           files: fileNames
         }
@@ -180,7 +181,7 @@ const updateProject = expressAsyncHandler(async (req, res) => {
     }
 
     //create file without content
-    if (createdFile && commitMessage) {
+     if (createdFile && commitMessage) {
       
       try {
         const createFileResponse = await createFile(repo, createdFile,"" ,commitMessage);
