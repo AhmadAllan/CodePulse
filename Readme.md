@@ -14,7 +14,7 @@ This is a graduation project for Software Engineering from Al-Balqa` Applied Uni
 by whom the project:
 **Ahmad Abed Ibrahim Allan** [GitHub Profile](https://github.com/AhmadAllan)
 
-**Jaafar AbdalMajid Muflih Al-Wahsh** [GitHub Profile](hhttps://github.com/JaafarAbdalmajeed)
+**Jaafar AbdalMajid Muflih Al-Wahsh** [GitHub Profile](https://github.com/JaafarAbdalmajeed)
 
 ## Requirements 
 1- User Registration and Authentication: Allow users to create accounts and log in securely to
