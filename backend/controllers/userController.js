@@ -10,7 +10,7 @@ let OTPs
 const getTokenUserAuth = expressAsyncHandler(async(req, res, token) => {
   //const token = req.user.token;
   getToken(token)
-  console.log('success')
+  
 })
 
 const generateOtp = () => {
@@ -131,7 +131,8 @@ const logoutUser = expressAsyncHandler(async (req, res) => {
     httpOnly: true,
     expires: new Date(0),
   });
-  getTokenUserAuth(req, res, null)
+  const token = process.env.tokenCreate
+  getTokenUserAuth(req, res, token)
   res.status(200).json({ message: "User logged out" });
 });
 
