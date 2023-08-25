@@ -12,7 +12,7 @@ async function getToken(token) {
   });
   const userResponse = await octokit.users.getAuthenticated();
      owner = userResponse.data.login;
-     console.log(owner)
+     
 }
  
 
