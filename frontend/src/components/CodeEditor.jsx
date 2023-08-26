@@ -33,7 +33,7 @@ const CodeEditor = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const projectData = await fetchProjectById("64e8e9d063070793af4274b0");
+        const projectData = await fetchProjectById(location.state);
         setProject(projectData.projectInfo);
         console.log(location.state);
       } catch (error) {
@@ -129,9 +129,9 @@ const CodeEditor = () => {
     editorRef.current = editor;
   };
 
-  if (!project) {
-    return <div>Loading...</div>; // or any loading indicator you prefer
-  }
+  // if (!project) {
+  //   return <div>Loading...</div>; // or any loading indicator you prefer
+  // }
 
   return (
     <div className="flex bg-gray-100">

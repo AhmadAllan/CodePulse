@@ -65,18 +65,6 @@ const Header = () => {
               </li>
               <li>
                 <Link
-                  to="/codeEditor"
-                  className={`text-gray-400 ${
-                    isActive("/codeEditor")
-                      ? "text-white border-b-2 border-white"
-                      : ""
-                  }`}
-                >
-                  <span>Code Editor</span>
-                </Link>
-              </li>
-              <li>
-                <Link
                   to="/versionControl"
                   className={`text-gray-400 ${
                     isActive("/versionControl")
