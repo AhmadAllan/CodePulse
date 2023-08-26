@@ -68,7 +68,9 @@ const getProject = expressAsyncHandler(async (req, res) => {
   if (project) {
     
     
-    const files = await fetchFiles(project.name)
+    const {
+      files,
+      pushEventsWithCommits} = await fetchFiles(project.name)
     
     if (typeof files === 'undefined' || files === '0') {
       // No content in the repository
@@ -91,7 +93,8 @@ const getProject = expressAsyncHandler(async (req, res) => {
             name: project.name,
             createBy: req.user.name
           },
-          files: fileNames
+          files: fileNames,
+          events:pushEventsWithCommits
         }
 
         res.json({
