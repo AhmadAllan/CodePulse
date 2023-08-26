@@ -87,6 +87,16 @@ async function getRepository(req, res) {
       });
   
       console.log('GitHub API response for createRepo:', response.data);
+      const readmeContent = '# ' + name + '\n' + description;
+    
+    const readmeResponse = await octokit.repos.createOrUpdateFileContents({
+      owner: owner,
+      repo: name,
+      path: 'README.md',
+      message: 'Initial commit',
+      content: Buffer.from(readmeContent).toString('base64'),
+    });
+
       return response; // Return the response directly without using res
     } catch (error) {
       console.error(error);
@@ -284,8 +294,33 @@ async function getRepository(req, res) {
         owner,
         repo,
       })
+      const activityResponse = await octokit.activity.listRepoEvents({
+        owner,
+        repo,
+      });
+
+      
       const files = response.data;
-      return files
+      const repoActivity = activityResponse.data;
+      const pushEventsWithCommits = [];
+
+
+      for (const event of repoActivity) {
+        if (event.type === "PushEvent") {
+          console.log(`Processing PushEvent ID: ${event.id}`);
+          // Fetch the commits associated with this push event
+          //const pushEventResponse = await octokit.request(event.payload.commits_url);
+          //const commits = pushEventResponse.data;
+          // Store the push event and its commits in an array
+          pushEventsWithCommits.push({
+            pushEvent: event.type,
+          });
+        }
+      }
+      return {
+        files,
+        pushEventsWithCommits
+      }
     } catch (error) {
       console.error('Error fetching files:', error);
 
