@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { setDefaultProject } from "../slices/defaultProjectSlice";
 import {
   fetchAllProjects,
   createProject,
@@ -9,8 +9,9 @@ import {
 import UserSearch from "./UserSearch";
 
 const ProjectPage = () => {
+  const navigate = useNavigate();
+
   const dispatch = useDispatch();
-  const defaultProject = useSelector((state) => state.defaultProject);
   const { userInfo } = useSelector((state) => state.auth);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -19,13 +20,13 @@ const ProjectPage = () => {
   const [createdBy, setCreatedBy] = useState(userInfo._id);
   const [members, setMembers] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
 
   useEffect(() => {
     async function fetchData() {
       try {
         const projectData = await fetchAllProjects();
         setProjects(projectData);
-        console.log(defaultProject);
       } catch (error) {
         console.error("Error fetching projects:", error);
         throw error;
@@ -34,11 +35,10 @@ const ProjectPage = () => {
     fetchData();
   }, []);
 
-  const [selectedProjectId, setSelectedProjectId] = useState(null);
+
 
   const handleProjectClick = (projectId) => {
     setSelectedProjectId(projectId);
-    dispatch(setDefaultProject(projectId));
   };
 
   const handleCreateProject = async (e) => {
@@ -72,6 +72,10 @@ const ProjectPage = () => {
   const handleUserSelect = (selectedUser) => {
     setMembers([...members, selectedUser]);
   };
+
+  const openEditor = () => {
+    navigate("/codeEditor", { state: selectedProjectId });
+  }
 
   const selectedProject = projects.find(
     (project) => project._id === selectedProjectId
@@ -157,7 +161,7 @@ const ProjectPage = () => {
                 <h2 className="text-xl font-bold">Code Editor</h2>
                 <p className="text-sm">Write and edit code for the project.</p>
               </div>
-              <button className="px-4 py-2 bg-blue-700 rounded-lg">
+              <button onClick={openEditor} className="px-4 py-2 bg-blue-700 rounded-lg">
                 Open Code Editor
               </button>
             </div>

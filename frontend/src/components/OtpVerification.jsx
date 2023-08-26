@@ -21,21 +21,20 @@ const OtpVerification = () => {
     e.preventDefault();
     try {
       const verificationData = {
-        name: location.state.name, // Retrieve the values from route state
+        name: location.state.name,
         username: location.state.username,
         email: location.state.email,
-        password: location.state.password, // You might not want to send the password again
+        password: location.state.password,
         token: location.state.token,
         country: location.state.country,
         gender: location.state.gender,
         edu: location.state.edu,
         otp: otp.trim(),
-        // ... Other data if needed ...
       };
 
       const res = await verifyOtpAndRegister(verificationData).unwrap();
       dispatch(setCredentials({ ...res }));
-      navigate("/"); // Navigate to the home page or dashboard after successful OTP verification and registration
+      navigate("/dashboard");
     } catch (err) {
       toast.error(err?.data?.message || err.error);
     }

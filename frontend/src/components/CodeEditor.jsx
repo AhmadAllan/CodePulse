@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 import { AiOutlineFile, AiOutlineSave, AiFillDelete } from "react-icons/ai";
 import { SiGithubactions } from "react-icons/si";
 import { fetchFile } from "../services/githubService";
@@ -18,7 +18,7 @@ const CodeEditor = () => {
   };
   const editorRef = useRef(null);
 
-  const defaultProject = useSelector((state) => state.defaultProject);
+  const location = useLocation();
 
   const [project, setProject] = useState(null);
   const [fileModel, setFileModel] = useState(false);
@@ -33,17 +33,16 @@ const CodeEditor = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const projectData = await fetchProjectById(
-          defaultProject.defaultProject
-        );
+        const projectData = await fetchProjectById("64e8e9d063070793af4274b0");
         setProject(projectData.projectInfo);
+        console.log(location.state);
       } catch (error) {
         console.error("Error fetching Files:", error);
         throw error;
       }
     }
     fetchData();
-  }, [defaultProject]);
+  }, []);
 
   const fetchFileData = async (fileName) => {
     try {
