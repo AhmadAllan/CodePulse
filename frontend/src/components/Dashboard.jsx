@@ -1,18 +1,33 @@
 import { useState } from 'react';
+import ModalContainer from './ModalContainer';
 
 const Dashboard = () => {
-  // State for active popup
-  const [activePopup, setActivePopup] = useState(null);
 
-  // Function to handle opening a popup
-  const handlePopupOpen = (popup) => {
-    setActivePopup(popup);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalContent, setModalContent] = useState(null);
+
+
+  const openModal = (title, content) => {
+    setModalTitle(title);
+    setModalContent(content);
+    setIsModalOpen(true);
   };
 
-  // Function to handle closing the popup
-  const handlePopupClose = () => {
-    setActivePopup(null);
+  const closeModal = () => {
+    setIsModalOpen(false);
   };
+
+  const modalContent2 = (
+    <>
+      <p>This is the second modal content.</p>
+      <ul>
+        <li>Item 1</li>
+        <li>Item 2</li>
+        <li>Item 3</li>
+      </ul>
+    </>
+  );
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
@@ -26,7 +41,7 @@ const Dashboard = () => {
             </div>
             <button
               className="px-4 py-2 bg-blue-700 rounded-lg"
-              onClick={() => handlePopupOpen('projects')}
+              onClick={() => openModal('Projects', modalContent2)}
             >
               View Projects
             </button>
@@ -38,7 +53,7 @@ const Dashboard = () => {
             </div>
             <button
               className="px-4 py-2 bg-green-700 rounded-lg"
-              onClick={() => handlePopupOpen('tasks')}
+              onClick={() => openModal('Tasks', modalContent2)}
             >
               View Tasks
             </button>
@@ -50,7 +65,7 @@ const Dashboard = () => {
             </div>
             <button
               className="px-4 py-2 bg-yellow-700 rounded-lg"
-              onClick={() => handlePopupOpen('collaborators')}
+              onClick={() => openModal('Collaborators', modalContent2)}
             >
               View Collaborators
             </button>
@@ -62,32 +77,21 @@ const Dashboard = () => {
             </div>
             <button
               className="px-4 py-2 bg-purple-700 rounded-lg"
-              onClick={() => handlePopupOpen('notifications')}
+              onClick={() => openModal('Notifications', modalContent2)}
             >
               View Notifications
             </button>
           </div>
         </div>
       </div>
-      {activePopup && (
-        <div className="fixed top-0 left-0 right-0 bottom-0 bg-gray-900 bg-opacity-75 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-6">
-            <h2 className="text-xl font-bold mb-4">
-              {activePopup === 'projects' && 'Projects Popup'}
-              {activePopup === 'tasks' && 'Tasks Popup'}
-              {activePopup === 'collaborators' && 'Collaborators Popup'}
-              {activePopup === 'notifications' && 'Notifications Popup'}
-            </h2>
-            <p>This is the content of the {activePopup} popup.</p>
-            <button
-              className="mt-4 px-4 py-2 bg-gray-700 text-white rounded-lg"
-              onClick={handlePopupClose}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+      <div>
+      <ModalContainer
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={modalTitle}
+        content={modalContent}
+      />
+    </div>
     </div>
   );
 };

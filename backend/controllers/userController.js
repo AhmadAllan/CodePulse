@@ -61,11 +61,19 @@ const registerUser = expressAsyncHandler(async (req, res) => {
   const { name, username, email, password, country, gender, edu, token } = req.body;
 
   const userExist = await User.findOne({ email });
+  const usernameExist = await User.findOne({ username });
 
   if (userExist) {
     res.status(400);
-    throw new Error("User already exists");
+    throw new Error("a user with this email already exists");
   }
+
+  if (usernameExist) {
+    res.status(400);
+    throw new Error("a user with this username already exists");
+  }
+
+  
 
   sendEmail(email, OTPs);
 
