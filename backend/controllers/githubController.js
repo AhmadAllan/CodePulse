@@ -298,29 +298,42 @@ async function getRepository(req, res) {
         owner,
         repo,
       });
+      const branchesResponse = await octokit.repos.listBranches({
+        owner,
+        repo,
+      });
 
-      
       const files = response.data;
       const repoActivity = activityResponse.data;
       const pushEventsWithCommits = [];
+      const branches = branchesResponse.data.map((branch) => branch.name);
 
 
-      for (const event of repoActivity) {
+      for (const event of activityResponse.data) {
         if (event.type === "PushEvent") {
-          console.log(`Processing PushEvent ID: ${event.id}`);
-          // Fetch the commits associated with this push event
-          //const pushEventResponse = await octokit.request(event.payload.commits_url);
-          //const commits = pushEventResponse.data;
-          // Store the push event and its commits in an array
+          
+          const eventType = event.type;
+          const actor = event.actor.login;
+          const eventMessage = event.payload.commits[0].message;
+          const eventTime = new Date(event.created_at).toLocaleString();
+
+          // Store the push event, commits, and commit messages in an array
           pushEventsWithCommits.push({
-            pushEvent: event.type,
+            eventType,
+            actor,
+            eventMessage,
+            eventTime
           });
         }
       }
+      
+  
       return {
         files,
-        pushEventsWithCommits
-      }
+        pushEventsWithCommits,
+        branches,
+      };
+  
     } catch (error) {
       console.error('Error fetching files:', error);
 

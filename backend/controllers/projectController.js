@@ -66,12 +66,13 @@ const getProject = expressAsyncHandler(async (req, res) => {
   const projectId = req.params.id;
   const project = await Project.findById(projectId).populate('createdBy', 'name');
   if (project) {
-    
-    
     const {
       files,
-      pushEventsWithCommits} = await fetchFiles(project.name)
-    
+      pushEventsWithCommits,
+      branches 
+    } = await fetchFiles(project.name)
+    console.log(branches)
+  
     if (typeof files === 'undefined' || files === '0') {
       // No content in the repository
       res.json({
@@ -94,7 +95,8 @@ const getProject = expressAsyncHandler(async (req, res) => {
             createBy: req.user.name
           },
           files: fileNames,
-          events:pushEventsWithCommits
+          events:pushEventsWithCommits,
+          branches
         }
 
         res.json({
