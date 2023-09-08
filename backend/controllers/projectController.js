@@ -93,7 +93,7 @@ const getProject = expressAsyncHandler(async (req, res) => {
           project: {
             id: project._id,
             name: project.name,
-            //createBy: req.user.name
+           // createBy: req.user.name
           },
           files: fileNames,
           events:pushEventsWithCommits,
