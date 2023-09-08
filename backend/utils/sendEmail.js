@@ -25,4 +25,21 @@ const sendEmail = (email, otp) => {
   });
 };
 
-export default sendEmail;
+const sendContactEmail = (senderName, senderEmail,reportType, subject, message) => {
+  const mailOptions = {
+    from: "aaa200265@gmail.com",
+    to: senderEmail, // Replace with the recipient's email address
+    subject: subject,
+    text: `Sender Name: ${senderName}\nSender Email: ${senderEmail}\nReport Type: ${reportType}\n\nMessage:\n${message}`,
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log("Error sending contact email: ", error);
+    } else {
+      console.log("Contact email sent: ", info);
+    }
+  });
+};
+
+export default {sendEmail, sendContactEmail};

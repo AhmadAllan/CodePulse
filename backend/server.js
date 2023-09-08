@@ -11,7 +11,8 @@ import commentRoutes from './routes/commentRoutes.js';
 import taskRoutes from './routes/taskRoutes.js';
 import chatRoutes from "./routes/chatRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
-import routersGithub from './routes/githubRoutes.js'
+import routersGithub from './routes/githubRoutes.js';
+import contactEmailRoutes from './routes/contactEmailRoutes.js';
 
 
 const port = process.env.PORT || 8000;
@@ -31,6 +32,7 @@ app.use('/api/tasks', taskRoutes);
 app.use("/api/chats", chatRoutes);
 app.use("/api/messages", messageRoutes);
 app.use('/api/github', routersGithub);
+app.use('/api/contact', contactEmailRoutes);
 
 
 if (process.env.NODE_ENV === 'production') {
