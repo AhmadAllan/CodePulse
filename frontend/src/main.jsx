@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import { Provider } from "react-redux";
 import "./index.css";
+import setupLogoutOnClose from "./slices/logoutOnClose";
 import Hero from "./components/Hero";
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -54,7 +55,7 @@ const router = createBrowserRouter(
     </Route>
   )
 );
-
+setupLogoutOnClose(store);
 // Render the application to the root element
 ReactDOM.render(
   <Provider store={store}>
