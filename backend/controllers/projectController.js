@@ -75,11 +75,12 @@ const getProject = expressAsyncHandler(async (req, res) => {
   
     if (typeof files === 'undefined' || files === '0') {
       // No content in the repository
+      
       res.json({
         project: {
           id: project._id,
           name: project.name,
-          createBy: req.user.name
+          //createBy: req.user.name
         },
         message: 'No content in the repository',
       });
@@ -87,12 +88,12 @@ const getProject = expressAsyncHandler(async (req, res) => {
       const fileNames = files
         .filter(file => file.path)
         .map(file => file.path.split('/').pop());
-
+        console.log(project.name)
         const projectInfo = {
           project: {
             id: project._id,
             name: project.name,
-            createBy: req.user.name
+            //createBy: req.user.name
           },
           files: fileNames,
           events:pushEventsWithCommits,

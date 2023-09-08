@@ -3,19 +3,17 @@ import dotenv from 'dotenv';
 import { json } from 'express';
 dotenv.config();
 
-//Token user in Github
-let octokit
-let owner
+// Token user in Github
+// let octokit
+// let owner
 async function getToken(token) {
-  octokit = new Octokit({
-    auth: `token ${token}`, // Replace accessToken with your actual access token
-  });
-  const userResponse = await octokit.users.getAuthenticated();
-     owner = userResponse.data.login;
-     
+  console.log('hi')
 }
- 
-
+const octokit = new Octokit({
+  auth: `token ${process.env.tokenCreate}`, // Replace accessToken with your actual access token
+});
+const userResponse = await octokit.users.getAuthenticated();
+  const owner = userResponse.data.login;
 
 
 // url: http://localhost:8000/api/github/repository/userName/repoName
@@ -289,6 +287,8 @@ async function getRepository(req, res) {
 
   async function fetchFiles(repo) {
     //const {owner, repo} = req.query
+    console.log(repo)
+    console.log(owner)
     try {
       const response = await octokit.repos.getContent({
         owner,
