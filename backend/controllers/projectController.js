@@ -75,6 +75,7 @@ const getProject = expressAsyncHandler(async (req, res) => {
   
     if (typeof files === 'undefined' || files === '0') {
       // No content in the repository
+      
       res.json({
         project: {
           id: project._id,
@@ -87,7 +88,7 @@ const getProject = expressAsyncHandler(async (req, res) => {
       const fileNames = files
         .filter(file => file.path)
         .map(file => file.path.split('/').pop());
-
+        console.log(project.name)
         const projectInfo = {
           project: {
             id: project._id,
