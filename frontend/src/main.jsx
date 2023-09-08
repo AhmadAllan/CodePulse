@@ -25,6 +25,7 @@ import PrivateRoute from "./utils/PrivateRoute";
 import UserSearch from "./components/UserSearch";
 import OtpVerification from "./components/OtpVerification";
 import ContactUsPage from "./components/ContactUsPage";
+import AboutUs from "./components/AboutUs";
 
 // Create a BrowserRouter instance
 const router = createBrowserRouter(
@@ -37,6 +38,7 @@ const router = createBrowserRouter(
       <Route path="/register" element={<Register />} />
       <Route path="/otp-verification" element={<OtpVerification />} />
       <Route path="/contact-us" element={<ContactUsPage />} />
+      <Route path="/about" element={<AboutUs />} />
       {/* Private Routes */}
       <Route path="" element={<PrivateRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
