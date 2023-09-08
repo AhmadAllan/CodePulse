@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ModalContainer from './ModalContainer';
+import ModalContainer from '../components/ModalContainer';
 
 const Dashboard = () => {
 

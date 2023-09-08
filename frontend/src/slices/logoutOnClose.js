@@ -1,12 +1,33 @@
-import { logout } from './authSlice'; // Import your logout action from authSlice.js
+// logoutOnClose.js
+
+import { logout } from './authSlice';
 
 const setupLogoutOnClose = (store) => {
-  // Listen for the beforeunload event
-  window.addEventListener('beforeunload', (event) => {
-    // Dispatch the logout action to log the user out
-    store.dispatch(logout());
-    // Customize the confirmation message if needed
-    event.returnValue = 'Are you sure you want to leave?';
+  const LOGOUT_TIMEOUT = 1000; // Adjust the timeout duration as needed (in milliseconds)
+  let tabClosedTimestamp = null;
+
+  // Listen for the unload event to track tab closure
+  window.addEventListener('unload', () => {
+    // Store the current timestamp in localStorage
+    localStorage.setItem('tabClosedTimestamp', Date.now());
+  });
+
+  // Listen for page load event
+  window.addEventListener('load', () => {
+    // Get the stored timestamp from localStorage
+    const storedTimestamp = localStorage.getItem('tabClosedTimestamp');
+
+    if (storedTimestamp) {
+      const timeSinceClose = Date.now() - parseInt(storedTimestamp, 10);
+
+      // If the tab was closed and reopened quickly, consider it a refresh
+      if (timeSinceClose < LOGOUT_TIMEOUT) {
+        localStorage.removeItem('tabClosedTimestamp'); // Remove the stored timestamp
+      } else {
+        // Dispatch the logout action to log the user out
+        store.dispatch(logout());
+      }
+    }
   });
 };
 

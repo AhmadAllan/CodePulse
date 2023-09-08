@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { fetchProjectById } from '../services/projectService';
+import Loader from '../components/Loader';
 
 const VersionControl = () => {
   const [expandedPush, setExpandedPush] = useState(null);
@@ -79,9 +80,7 @@ const VersionControl = () => {
             </div>
           </>
         ) : (
-          <div className="flex justify-center items-center h-screen">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
-          </div>
+          <Loader />
         )}
       </div>
     </div>

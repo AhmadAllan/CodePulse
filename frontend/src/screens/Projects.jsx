@@ -6,7 +6,7 @@ import {
   createProject,
   deleteProject,
 } from "../services/projectService";
-import UserSearch from "./UserSearch";
+import UserSearch from "../components/UserSearch";
 
 const ProjectPage = () => {
   const navigate = useNavigate();
