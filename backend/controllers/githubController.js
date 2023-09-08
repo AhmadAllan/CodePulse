@@ -4,18 +4,17 @@ import { json } from 'express';
 dotenv.config();
 
 //Token user in Github
-let octokit
-let owner
+// let octokit
+// let owner
 async function getToken(token) {
-  octokit = new Octokit({
-    auth: `token ${token}`, // Replace accessToken with your actual access token
-  });
-  const userResponse = await octokit.users.getAuthenticated();
-     owner = userResponse.data.login;
-     
+ console.log("")
 }
  
-
+const octokit = new Octokit({
+  auth: `token ${process.env.tokenCreate}`, // Replace accessToken with your actual access token
+});
+const  userResponse = await octokit.users.getAuthenticated();
+   owner = userResponse.data.login;
 
 
 // url: http://localhost:8000/api/github/repository/userName/repoName
