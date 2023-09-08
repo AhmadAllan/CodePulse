@@ -14,7 +14,7 @@ const octokit = new Octokit({
   auth: `token ${process.env.tokenCreate}`, // Replace accessToken with your actual access token
 });
 const  userResponse = await octokit.users.getAuthenticated();
-   owner = userResponse.data.login;
+   const owner = userResponse.data.login;
 
 
 // url: http://localhost:8000/api/github/repository/userName/repoName
