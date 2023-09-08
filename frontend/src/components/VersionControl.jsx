@@ -1,160 +1,86 @@
 import { useState, useEffect } from 'react';
-import { useLocation } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
-import { fetchProjectById } from "../services/projectService";
+import { fetchProjectById } from '../services/projectService';
 
 const VersionControl = () => {
-  
-  const [projects] = useState([
-    {
-      id: 1,
-      name: 'Project A',
-      branches: ['main', 'feature-1', 'bugfix-1'],
-      pushs: [
-        { id: 1, title: 'Implement feature 1', author: 'John Doe', date: '2023-08-14', file: 'main.js' },
-        { id: 2, title: 'Fix critical bug', author: 'Jane Smith', date: '2023-08-15', file: 'bugfix.js' },
-      ],
-      commits: [
-        { id: 1, message: 'Initial commit', author: 'John Doe', date: '2023-08-10' },
-        { id: 2, message: 'Implement feature 1', author: 'John Doe', date: '2023-08-12' },
-        { id: 3, message: 'Fix bug in feature 1', author: 'John Doe', date: '2023-08-13' },
-      ],
-    },
-    // Add more projects here
-  ]);
+  const [expandedPush, setExpandedPush] = useState(null);
+  const [project, setProject] = useState(null);
 
   const location = useLocation();
-  const [selectedProjectId, setSelectedProjectId] = useState(1);
-  const [expandedpushs, setExpandedpushs] = useState([]);
-  const [expandedCommits, setExpandedCommits] = useState([]);
-  const [project, setProject] = useState(null)
 
   useEffect(() => {
     async function fetchData() {
-      console.log(location.state);
       try {
         const projectData = await fetchProjectById(location.state);
-        setProject(projectData);
-        console.log(project);
+        setProject(projectData.projectInfo);
       } catch (error) {
-        console.error("Error fetching Files:", error);
+        console.error('Error fetching Project:', error);
         throw error;
       }
     }
     fetchData();
-  },[]);
+  }, [location.state]);
 
-  const handlepushToggle = (pushId) => {
-    // Toggle the push's expanded state
-    setExpandedpushs((prevExpandedpushs) =>
-      prevExpandedpushs.includes(pushId)
-        ? prevExpandedpushs.filter((id) => id !== pushId)
-        : [...prevExpandedpushs, pushId]
-    );
+  const handlePushToggle = (pushId) => {
+    setExpandedPush((prevPush) => (prevPush === pushId ? null : pushId));
   };
-
-  const handleCommitToggle = (commitId) => {
-    // Toggle the commit's expanded state
-    setExpandedCommits((prevExpandedCommits) =>
-      prevExpandedCommits.includes(commitId)
-        ? prevExpandedCommits.filter((id) => id !== commitId)
-        : [...prevExpandedCommits, commitId]
-    );
-  };
-
-  const selectedProject = projects.find((project) => project.id === selectedProjectId);
 
   return (
-    <div className="flex bg-gray-100">
-      {/* <div className="w-1/4 bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-bold mb-4">Projects</h2>
-        <ul>
-          {projects.map((project) => (
-            <li
-              key={project.id}
-              className={`mb-2 cursor-pointer ${
-                selectedProjectId === project.id ? 'text-blue-500 font-semibold' : 'text-gray-800'
-              }`}
-              onClick={() => handleProjectChange(project.id)}
-            >
-              {project.name}
-            </li>
-          ))}
-        </ul>
-      </div> */}
-      <div className="flex-1 bg-white rounded-lg shadow-md p-6">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">
-          test
-        </h1>
-        {selectedProject && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Version Control</h2>
-            <div className="border border-gray-300 rounded-lg p-4 mb-4">
-              <h3 className="text-lg font-bold mb-2">Branches</h3>
-              <ul>
-                {selectedProject.branches.map((branch) => (
-                  <li key={branch} className="mb-2">
-                    {branch}
-                  </li>
+    <div className="min-h-screen bg-gray-100">
+      <div className="p-6">
+        {project ? (
+          <>
+            <h1 className="text-3xl font-semibold text-gray-800 mb-6">{project.project.name}</h1>
+            <div className="bg-white shadow-md rounded-lg w-full p-6">
+              <h2 className="text-2xl font-semibold mb-4">Version Control</h2>
+              <div className="mb-6">
+                <div className="border rounded-lg p-4">
+                  <h3 className="text-lg font-semibold mb-2">Branches</h3>
+                  <ul className="list-disc list-inside">
+                    {project.branches.map((branch) => (
+                      <li key={branch} className="mb-2">
+                        {branch}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold mb-2">Events</h3>
+                {project.events.map((event) => (
+                  <div key={event.eventType} className="mb-4">
+                    <div
+                      className="border rounded-lg p-4 cursor-pointer"
+                      onClick={() => handlePushToggle(event.eventType)}
+                    >
+                      <span className="text-blue-500 font-semibold">{event.eventType}</span>
+                      <FontAwesomeIcon
+                        icon={faChevronDown}
+                        className={`ml-2 ${
+                          expandedPush === event.eventType ? 'transform rotate-180' : ''
+                        }`}
+                      />
+                      {expandedPush === event.eventType && (
+                        <div className="pl-4 pt-2">
+                          <p className="text-gray-600">
+                            Author: {event.actor}<br />
+                            Date: {event.eventTime}<br />
+                            File: test<br />
+                            Commit: {event.eventMessage}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
-            <div className="border border-gray-300 rounded-lg p-4 mb-4">
-              <h3 className="text-lg font-bold mb-2">pushs</h3>
-              {selectedProject.pushs.map((push) => (
-                <div key={push.id} className="mb-2">
-                  <div
-                    className="flex items-center justify-between cursor-pointer"
-                    onClick={() => handlepushToggle(push.id)}
-                  >
-                    <span>{push.title}</span>
-                    <FontAwesomeIcon
-                      icon={faChevronDown}
-                      className={`ml-2 ${
-                        expandedpushs.includes(push.id) ? 'transform rotate-180' : ''
-                      }`}
-                    />
-                  </div>
-                  {expandedpushs.includes(push.id) && (
-                    <div className="pl-4">
-                      <p>
-                        Author: {push.author}<br />
-                        Date: {push.date}<br />
-                        File: {push.file}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-            <div className="border border-gray-300 rounded-lg p-4 mb-4">
-              <h3 className="text-lg font-bold mb-2">Commits</h3>
-              {selectedProject.commits.map((commit) => (
-                <div key={commit.id} className="mb-2">
-                  <div
-                    className="flex items-center justify-between cursor-pointer"
-                    onClick={() => handleCommitToggle(commit.id)}
-                  >
-                    <span>{commit.message}</span>
-                    <FontAwesomeIcon
-                      icon={faChevronDown}
-                      className={`ml-2 ${
-                        expandedCommits.includes(commit.id) ? 'transform rotate-180' : ''
-                      }`}
-                    />
-                  </div>
-                  {expandedCommits.includes(commit.id) && (
-                    <div className="pl-4">
-                      <p>
-                        Author: {commit.author}<br />
-                        Date: {commit.date}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
+          </>
+        ) : (
+          <div className="flex justify-center items-center h-screen">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500 border-solid"></div>
           </div>
         )}
       </div>
