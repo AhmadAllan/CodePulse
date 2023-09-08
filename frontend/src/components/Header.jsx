@@ -65,18 +65,6 @@ const Header = () => {
               </li>
               <li>
                 <Link
-                  to="/versionControl"
-                  className={`text-gray-400 ${
-                    isActive("/versionControl")
-                      ? "text-white border-b-2 border-white"
-                      : ""
-                  }`}
-                >
-                  <span>Version Control</span>
-                </Link>
-              </li>
-              <li>
-                <Link
                   to="/chat"
                   className={`text-gray-400 ${
                     isActive("/chat")
@@ -85,18 +73,6 @@ const Header = () => {
                   }`}
                 >
                   <span>Chat</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/codeReview"
-                  className={`text-gray-400 ${
-                    isActive("/codeReview")
-                      ? "text-white border-b-2 border-white"
-                      : ""
-                  }`}
-                >
-                  <span>Code Review</span>
                 </Link>
               </li>
               <li>

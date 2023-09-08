@@ -77,6 +77,10 @@ const ProjectPage = () => {
     navigate("/codeEditor", { state: selectedProjectId });
   }
 
+  const openVersionControl = () => {
+    navigate("/versionControl", { state: selectedProjectId });
+  }
+
   const selectedProject = projects.find(
     (project) => project._id === selectedProjectId
   );
@@ -172,7 +176,7 @@ const ProjectPage = () => {
                   Manage project versions and collaborate on code.
                 </p>
               </div>
-              <button className="px-4 py-2 bg-green-700 rounded-lg">
+              <button onClick={openVersionControl} className="px-4 py-2 bg-green-700 rounded-lg">
                 Open Version Control
               </button>
             </div>

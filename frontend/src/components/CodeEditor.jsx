@@ -42,7 +42,7 @@ const CodeEditor = () => {
       }
     }
     fetchData();
-  }, []);
+  }, [location.state]);
 
   const fetchFileData = async (fileName) => {
     try {
@@ -129,9 +129,9 @@ const CodeEditor = () => {
     editorRef.current = editor;
   };
 
-  // if (!project) {
-  //   return <div>Loading...</div>; // or any loading indicator you prefer
-  // }
+  if (!project) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex bg-gray-100">

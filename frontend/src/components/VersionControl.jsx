@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { fetchProjectById } from "../services/projectService";
 
 const VersionControl = () => {
+  
   const [projects] = useState([
     {
       id: 1,
@@ -21,13 +24,26 @@ const VersionControl = () => {
     // Add more projects here
   ]);
 
+  const location = useLocation();
   const [selectedProjectId, setSelectedProjectId] = useState(1);
   const [expandedpushs, setExpandedpushs] = useState([]);
   const [expandedCommits, setExpandedCommits] = useState([]);
+  const [project, setProject] = useState(null)
 
-  const handleProjectChange = (projectId) => {
-    setSelectedProjectId(projectId);
-  };
+  useEffect(() => {
+    async function fetchData() {
+      console.log(location.state);
+      try {
+        const projectData = await fetchProjectById(location.state);
+        setProject(projectData);
+        console.log(project);
+      } catch (error) {
+        console.error("Error fetching Files:", error);
+        throw error;
+      }
+    }
+    fetchData();
+  },[]);
 
   const handlepushToggle = (pushId) => {
     // Toggle the push's expanded state
@@ -51,7 +67,7 @@ const VersionControl = () => {
 
   return (
     <div className="flex bg-gray-100">
-      <div className="w-1/4 bg-white rounded-lg shadow-md p-6">
+      {/* <div className="w-1/4 bg-white rounded-lg shadow-md p-6">
         <h2 className="text-xl font-bold mb-4">Projects</h2>
         <ul>
           {projects.map((project) => (
@@ -66,10 +82,10 @@ const VersionControl = () => {
             </li>
           ))}
         </ul>
-      </div>
-      <div className="flex-1 bg-white rounded-lg shadow-md p-6 ml-4">
+      </div> */}
+      <div className="flex-1 bg-white rounded-lg shadow-md p-6">
         <h1 className="text-3xl font-bold text-gray-800 mb-6">
-          {selectedProject ? selectedProject.name : 'Select a Project'}
+          test
         </h1>
         {selectedProject && (
           <div>
