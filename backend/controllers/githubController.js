@@ -89,6 +89,7 @@ async function getRepository(req, res) {
         name, // Name of the repository (required)
         description, // Description of the repository
         owner,
+        private: true, 
         // TODO: Add other properties as needed
       });
   
