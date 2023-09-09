@@ -22,7 +22,7 @@ export const fetchCommentById = async (commentId) => {
 
 export const fetchCommentsByProject = async (projectId) => {
   try {
-    const response = await axios.get(`/api/project/${projectId}`);
+    const response = await axios.get(`/api/comments/project/${projectId}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching comments:", error);

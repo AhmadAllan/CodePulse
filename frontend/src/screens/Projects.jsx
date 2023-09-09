@@ -5,7 +5,6 @@ import {
   fetchAllProjects,
   createProject,
   deleteProject,
-  updateProject
 } from "../services/projectService";
 import UserSearch from "../components/UserSearch";
 
@@ -85,6 +84,14 @@ const ProjectPage = () => {
 
   const openVersionControl = () => {
     navigate("/versionControl", { state: selectedProjectId });
+  }
+
+  const openReview = () => {
+    navigate("/codeReview", { state: selectedProjectId });
+  }
+
+  const openTasks = () => {
+    navigate("/taskManagement", { state: selectedProjectId });
   }
 
   const selectedProject = projects.find(
@@ -188,22 +195,22 @@ const ProjectPage = () => {
             </div>
             <div className="bg-yellow-500 text-white rounded-lg p-4 flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold">Chat</h2>
+                <h2 className="text-xl font-bold">Review</h2>
                 <p className="text-sm">
-                  Communicate with project collaborators.
+                  Review the comment on the project.
                 </p>
               </div>
-              <button className="px-4 py-2 bg-yellow-700 rounded-lg">
-                Open Chat
+              <button onClick={openReview} className="px-4 py-2 bg-yellow-700 rounded-lg">
+                Open Code Review
               </button>
             </div>
             <div className="bg-purple-500 text-white rounded-lg p-4 flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-bold">Projects</h2>
-                <p className="text-sm">Manage and track project projects.</p>
+                <h2 className="text-xl font-bold">Tasks</h2>
+                <p className="text-sm">Manage and track project tasks.</p>
               </div>
-              <button className="px-4 py-2 bg-purple-700 rounded-lg">
-                Open Project Management
+              <button onClick={openTasks} className="px-4 py-2 bg-purple-700 rounded-lg">
+                Open Tasks Management
               </button>
             </div>
           </div>

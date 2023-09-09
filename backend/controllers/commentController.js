@@ -4,7 +4,7 @@ import Comment from "../models/commentModel.js";
 // function to create a new comment
 
 const createComment = expressAsyncHandler(async (req, res) => {
-  const { project, createdBy, title, text } = req.body;
+  const { project, createdBy, title, text, fileName } = req.body;
 
   // Create a new comment instance
   const newComment = await Comment.create({
@@ -12,6 +12,7 @@ const createComment = expressAsyncHandler(async (req, res) => {
     createdBy,
     title,
     text,
+    fileName
   });
   res.status(201).json(newComment);
 });

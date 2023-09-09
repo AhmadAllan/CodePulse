@@ -64,23 +64,29 @@ const getAllProjects = expressAsyncHandler(async (req, res) => {
 // @access Public
 const getProject = expressAsyncHandler(async (req, res) => {
   const projectId = req.params.id;
-  const project = await Project.findById(projectId).populate('createdBy', 'name');
+  const project = await Project.findById(projectId)
+    .populate('createdBy', 'name')
+    .populate('members', 'name'); // Populate the 'members' field with user information
+
   if (project) {
     const {
       files,
       pushEventsWithCommits,
-      branches 
-    } = await fetchFiles(project.name)
-    console.log(branches)
-  
+      branches
+    } = await fetchFiles(project.name);
+
     if (typeof files === 'undefined' || files === '0') {
       // No content in the repository
-      
+
       res.json({
         project: {
           id: project._id,
           name: project.name,
-          //createBy: req.user.name
+          createBy: req.user.name,
+          members: project.members.map(member => ({
+            id: member._id,
+            name: member.name // Return user name along with member id
+          }))
         },
         message: 'No content in the repository',
       });
@@ -88,28 +94,32 @@ const getProject = expressAsyncHandler(async (req, res) => {
       const fileNames = files
         .filter(file => file.path)
         .map(file => file.path.split('/').pop());
-        console.log(project.name)
-        const projectInfo = {
-          project: {
-            id: project._id,
-            name: project.name,
-           // createBy: req.user.name
-          },
-          files: fileNames,
-          events:pushEventsWithCommits,
-          branches
-        }
+      console.log(project.name);
+      const projectInfo = {
+        project: {
+          id: project._id,
+          name: project.name,
+          createBy: req.user.name,
+          members: project.members.map(member => ({
+            id: member._id,
+            name: member.name // Return user name along with member id
+          }))
+        },
+        files: fileNames,
+        events: pushEventsWithCommits,
+        branches
+      };
 
-        res.json({
-          projectInfo
-        });
-
+      res.json({
+        projectInfo
+      });
     }
   } else {
     res.status(404);
     throw new Error('Project not found');
   }
 });
+
 
 
 // @desc Update a project
