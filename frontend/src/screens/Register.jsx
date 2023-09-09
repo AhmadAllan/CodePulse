@@ -180,6 +180,7 @@ const Register = () => {
 
         const res = await register(userData).unwrap();
         dispatch(setCredentials({ ...res }));
+        console.log("1- here");
         navigate("/otp-verification", { state: userData });
       } catch (err) {
         console.log(err);

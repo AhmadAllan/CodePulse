@@ -75,7 +75,7 @@ const registerUser = expressAsyncHandler(async (req, res) => {
 
   
 
-  sendEmail(email, OTPs);
+  sendEmail.sendOtpEmail(email, OTPs);
 
   res.status(200).json({ message: "OTP sent successfully" });
 });

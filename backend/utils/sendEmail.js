@@ -8,7 +8,7 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendEmail = (email, otp) => {
+const sendOtpEmail = (email, otp) => {
   const mailOptions = {
     from: "aaa200265@gmail.com",
     to: email,
@@ -42,4 +42,4 @@ const sendContactEmail = (senderName, senderEmail,reportType, subject, message) 
   });
 };
 
-export default {sendEmail, sendContactEmail};
+export default {sendOtpEmail, sendContactEmail};

@@ -32,6 +32,7 @@ const OtpVerification = () => {
         otp: otp.trim(),
       };
 
+      console.log("2- here otp");
       const res = await verifyOtpAndRegister(verificationData).unwrap();
       dispatch(setCredentials({ ...res }));
       navigate("/dashboard");

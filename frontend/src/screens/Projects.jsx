@@ -5,6 +5,7 @@ import {
   fetchAllProjects,
   createProject,
   deleteProject,
+  updateProject
 } from "../services/projectService";
 import UserSearch from "../components/UserSearch";
 
@@ -70,7 +71,12 @@ const ProjectPage = () => {
   };
 
   const handleUserSelect = (selectedUser) => {
-    setMembers([...members, selectedUser]);
+    // Check if the selectedUser is not already in the members array
+    if (!members.some((member) => member._id === selectedUser._id)) {
+      setMembers([...members, selectedUser]);
+    }
+
+    console.log(members);
   };
 
   const openEditor = () => {

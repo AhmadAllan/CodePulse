@@ -160,13 +160,6 @@ const CodeEditor = () => {
             >
               <SiGithubactions color="white" size={30} />
             </div>
-            <div
-              className={
-                "p-3 mt-6 bg-blue-400 hover:bg-blue-500 hover:cursor-pointer"
-              }
-            >
-              <AiOutlineSave color="white" size={30} />
-            </div>
           </div>
 
           {/* File Model */}
