@@ -1,7 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
-import { getToken } from "./githubController.js";
+import { getToken, getUsername } from "./githubController.js";
 import sendEmail from "../utils/sendEmail.js";
 import otpGenerator from "otp-generator";
 
@@ -9,7 +9,10 @@ let OTPs
 
 const getTokenUserAuth = expressAsyncHandler(async(req, res, token) => {
   //const token = req.user.token;
-  getToken(token)
+  //getToken(token)
+  //console.log(await getUsername(token))
+
+  
   
 })
 
@@ -36,7 +39,10 @@ const authUser = expressAsyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
   if (user && (await user.matchPassword(password))) {
     generateToken(res, user._id);
-    getTokenUserAuth(req, res, user.token);
+    //getTokenUserAuth(req, res, user.token);
+     user.username = await getUsername(user.token)
+     owner = user.username
+     const updatedUser = await user.save();
     res.status(201).json({
       _id: user._id,
       name: user.name,
@@ -87,7 +93,7 @@ const verifyOtpAndCreateUser = expressAsyncHandler(async (req, res) => {
   const { email, otp, name, username, password, country, gender, edu, token } = req.body;
 
   const userExist = await User.findOne({ email });
-
+  
   if (userExist) {
     res.status(400);
     throw new Error("User already exists");
@@ -110,7 +116,9 @@ const verifyOtpAndCreateUser = expressAsyncHandler(async (req, res) => {
 
     if (user) {
       generateToken(res, user._id);
-      getTokenUserAuth(req, res, user.token);
+       getTokenUserAuth(req, res, user.token);
+      user.username = await getUsername(user.token)
+      const updatedUser = await user.save(); 
       res.status(201).json({
         _id: user._id,
         name: user.name,

@@ -14,6 +14,14 @@ async function getToken(token) {
   });
   const userResponse = await octokit.users.getAuthenticated();
      owner = userResponse.data.login;
+
+     return owner
+}
+
+async function getUsername(token){
+  const username = getToken(token)
+  return username
+
 }
 // const octokit = new Octokit({
 //   auth: `token ${process.env.tokenCreate}`, // Replace accessToken with your actual access token
@@ -362,6 +370,7 @@ export {
     createFile,
     deleteFile,
     fetchFiles,
-    getToken
+    getToken,
+    getUsername
   };
   
