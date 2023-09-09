@@ -113,15 +113,7 @@ const Register = () => {
     }
     return isEmailValid;
   };
-
-  const validateUsername = (username) => {
-    // You can implement username validation here if needed
-    // Check if the username is unique
-    // For simplicity, you can add a list of taken usernames and check against it
-    const takenUsernames = ["existingusername1", "existingusername2"];
-    return !takenUsernames.includes(username);
-  };
-
+  
   const submitHandler = async (e) => {
     e.preventDefault();
     const errors = {};

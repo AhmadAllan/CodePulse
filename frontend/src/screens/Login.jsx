@@ -40,7 +40,7 @@ const Login = () => {
       // Validation passed, proceed with login request
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials({ ...res }));
-      navigate("/");
+      navigate("/dashboard");
     } catch (err) {
       if (err instanceof yup.ValidationError) {
         const errors = {};

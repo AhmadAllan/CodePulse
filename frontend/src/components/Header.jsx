@@ -75,18 +75,6 @@ const Header = () => {
                   <span>Chat</span>
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/taskManagement"
-                  className={`text-gray-400 ${
-                    isActive("/taskManagement")
-                      ? "text-white border-b-2 border-white"
-                      : ""
-                  }`}
-                >
-                  <span>Task Management</span>
-                </Link>
-              </li>
             </ul>
             <Menu as="div" className="relative inline-block text-right">
               <div className="bg-transparent">
