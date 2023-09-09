@@ -130,9 +130,9 @@ const Register = () => {
       errors.name = "Name is required";
     }
 
-    if (!username || !validateUsername(username)) {
-      errors.username = "Username is required or already taken";
-    }
+    // if (!username || !validateUsername(username)) {
+    //   errors.username = "Username is required or already taken";
+    // }
 
     if (!email || !validateEmail(email)) {
       errors.email = "Valid email is required";
@@ -220,7 +220,7 @@ const Register = () => {
         </div>
 
         {/* Username */}
-        <div className="my-2">
+        {/* <div className="my-2">
           <label htmlFor="username" className="block mb-1">
             Username
           </label>
@@ -237,7 +237,7 @@ const Register = () => {
           {fieldErrors.username && (
             <p className="text-red-500 text-sm">{fieldErrors.username}</p>
           )}
-        </div>
+        </div> */}
 
         {/* Email */}
         <div className="my-2">
