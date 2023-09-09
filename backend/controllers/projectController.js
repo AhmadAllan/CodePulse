@@ -163,7 +163,8 @@ const updateProject = expressAsyncHandler(async (req, res) => {
         if (!project.members.includes(memberId)) {
           const collaborator = await User.findById(memberId)
             project.members.push(memberId);
-            addCollaborator(repo, collaborator.name)
+            addCollaborator(repo, collaborator.username)
+            
         }
       }
     }
@@ -252,8 +253,8 @@ const deleteProject = expressAsyncHandler(async (req, res) => {
   });
 
   if (project) {
-    const user = await User.findById(project.createdBy)
-     if (user) {
+    // const user = await User.findById(project.createdBy)
+    //  if (user) {
          await deleteRepo(project.name);
          const deleteProjectResult = await Project.findByIdAndDelete(projectId);
         if (deleteProjectResult) {
@@ -262,7 +263,7 @@ const deleteProject = expressAsyncHandler(async (req, res) => {
           res.status(404);
           throw new Error('Project not found');
         }
-     } 
+    //  } 
     }
     
 });
