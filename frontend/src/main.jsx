@@ -27,6 +27,7 @@ import UserSearch from "./components/UserSearch";
 import OtpVerification from "./components/OtpVerification";
 import ContactUsPage from "./screens/ContactUsPage";
 import AboutUs from "./screens/AboutUs";
+import ChatBox from "./components/ChatBox";
 
 // Create a BrowserRouter instance
 const router = createBrowserRouter(
@@ -51,6 +52,7 @@ const router = createBrowserRouter(
         <Route path="/taskManagement" element={<TaskManagement />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/user-search" element={<UserSearch />} />
+        <Route path="/chatBox" element={<ChatBox />} />
       </Route>
     </Route>
   )

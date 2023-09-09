@@ -1,9 +1,7 @@
-// logoutOnClose.js
-
 import { logout } from './authSlice';
 
 const setupLogoutOnClose = (store) => {
-  const LOGOUT_TIMEOUT = 1000; // Adjust the timeout duration as needed (in milliseconds)
+  const LOGOUT_TIMEOUT = 3000; // Adjust the timeout duration as needed (in milliseconds)
   let tabClosedTimestamp = null;
 
   // Listen for the unload event to track tab closure

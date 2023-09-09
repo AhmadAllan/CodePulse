@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
-import { AiOutlineFile, AiOutlineSave, AiFillDelete } from "react-icons/ai";
-import { SiGithubactions } from "react-icons/si";
+import { AiOutlineFile, AiFillDelete, AiFillMessage, AiTwotoneMessage, AiOutlineMessage } from "react-icons/ai";
+import { SiGithubactions, } from "react-icons/si";
 import { fetchFile } from "../services/githubService";
 import { fetchProjectById, updateProject } from "../services/projectService";
 import MonacoEditor from "react-monaco-editor";
 import Loader from "../components/Loader";
+import ChatBox from "../components/ChatBox";
 
 const CodeEditor = () => {
   // Options for the Monaco editor
@@ -30,6 +31,7 @@ const CodeEditor = () => {
   const [showInput, setShowInput] = useState(false);
   const [commitMessage, setCommitMessage] = useState("");
   const [selectedFile, setSelectedFile] = useState("");
+  const [isOpen, setIsOpen] = useState(false)
 
   useEffect(() => {
     async function fetchData() {
@@ -160,6 +162,17 @@ const CodeEditor = () => {
             >
               <SiGithubactions color="white" size={30} />
             </div>
+
+            <div
+              className={`p-3 hover:bg-slate-400 ${
+                gitModel ? "border-l-4 border-blue-500" : ""
+              }`}
+              onClick={() => {
+                setIsOpen(!isOpen)
+              }}
+            >
+              <AiOutlineMessage color="white" size={30} />
+            </div>
           </div>
 
           {/* File Model */}
@@ -286,6 +299,9 @@ const CodeEditor = () => {
               editorDidMount={handleEditorDidMount}
             />
           </div>
+          <ChatBox
+            isOpen={isOpen}
+          />
         </>
       ) : (
         <>
