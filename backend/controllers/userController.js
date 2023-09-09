@@ -9,11 +9,9 @@ let OTPs
 
 const getTokenUserAuth = expressAsyncHandler(async(req, res, token) => {
   //const token = req.user.token;
-  //getToken(token)
+  getToken(token)
   //console.log(await getUsername(token))
 
-  
-  
 })
 
 const generateOtp = () => {
@@ -41,7 +39,6 @@ const authUser = expressAsyncHandler(async (req, res) => {
     generateToken(res, user._id);
     //getTokenUserAuth(req, res, user.token);
      user.username = await getUsername(user.token)
-     owner = user.username
      const updatedUser = await user.save();
     res.status(201).json({
       _id: user._id,
