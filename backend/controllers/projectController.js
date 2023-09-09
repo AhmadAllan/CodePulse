@@ -51,8 +51,36 @@ const createProject = expressAsyncHandler(async (req, res) => {
 // @access Public
 const getAllProjects = expressAsyncHandler(async (req, res) => {
   const projects = await Project.find({});
+ 
+  if (!req.user) {
+    return res.status(401).json({ error: 'Authentication required' });
+  }
+
+  // Now, you can access the username of the authenticated user
+  const authenticatedUsername = req.user.username;
+  
+  console.log(projects)
+  const myProjects = []
+  for (const project of projects) {
+    if (project.githubRepository) {
+      console.log(project.githubRepository)
+       const githubUrl = project.githubRepository;
+       const urlParts = githubUrl.split('/'); // Split the URL by '/'
+      // // The owner is the second part of the URL (index 1)
+       const owner = urlParts[3]; // Assuming the URL structure is github.com/owner/repo
+
+      // // Assuming you have the 'username' available from somewhere
+       const username = authenticatedUsername; // Replace with your actual 'username'
+
+      // // Compare the 'owner' with 'username'
+       if (owner === username) {
+         myProjects.push(project);
+       }
+    }
+  }
+
   if (projects) {
-    res.json(projects);
+    res.json(myProjects);
   } else {
     res.status(500).json({ error: 'error not found projects' });
   }

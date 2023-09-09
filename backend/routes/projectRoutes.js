@@ -5,7 +5,7 @@ import { createProject, deleteProject, getAllProjects, getProject, updateProject
 const router = express.Router();
 
 router.post('/', createProject);
-router.get('/', getAllProjects);
+router.get('/',protect, getAllProjects);
 router.route('/:id')
 .get(protect, getProject)
 .put(protect, updateProject)
