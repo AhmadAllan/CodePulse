@@ -27,11 +27,6 @@ const Register = () => {
 
   const [register, { isLoading }] = useRegisterMutation();
 
-  useEffect(() => {
-    if (userInfo) {
-      navigate("/");
-    }
-  }, [navigate, userInfo]);
 
   const clearError = (field) => {
     // Create a copy of the current fieldErrors state
