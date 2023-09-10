@@ -17,7 +17,7 @@ const ProjectPage = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [createdBy, setCreatedBy] = useState(userInfo._id);
+  const [createdBy] = useState(userInfo._id);
   const [members, setMembers] = useState([]);
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
@@ -56,6 +56,7 @@ const ProjectPage = () => {
     } catch (error) {
       console.error("Error creating project:", error);
     }
+    console.log(projects);
   };
 
   const handleProjectDelete = async (projectId) => {

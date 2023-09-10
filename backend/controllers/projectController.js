@@ -36,6 +36,7 @@ const createProject = expressAsyncHandler(async (req, res) => {
       });
 
     // Call the createRepo function without passing res
+    console.log(project)
     const repoResponse = await createRepo(name, description); // Pass name and description directly to createRepo
 
     if (members && members.length > 0) {
@@ -65,26 +66,22 @@ const createProject = expressAsyncHandler(async (req, res) => {
 // @desc Get all projects
 // @route GET /api/projects/
 // @access Public
-// ...
-
 const getAllProjects = expressAsyncHandler(async (req, res) => {
-  const projects = await Project.find({}).populate({
-    path: 'members',
-    select: '_id name username',
-  });
-
+  const projects = await Project.find({});
+ 
   if (!req.user) {
     return res.status(401).json({ error: 'Authentication required' });
   }
 
   // Now, you can access the username of the authenticated user
   const authenticatedUsername = req.user.username;
+  const authenticatedId = req.user._id;
   
-  console.log(projects)
   const myProjects = []
+  const myProjectsForTeams = []
   for (const project of projects) {
     if (project.githubRepository) {
-      console.log(project.githubRepository)
+      
        const githubUrl = project.githubRepository;
        const urlParts = githubUrl.split('/'); // Split the URL by '/'
       // // The owner is the second part of the URL (index 1)
@@ -92,7 +89,7 @@ const getAllProjects = expressAsyncHandler(async (req, res) => {
 
       // // Assuming you have the 'username' available from somewhere
        const username = authenticatedUsername; // Replace with your actual 'username'
-
+       
       // // Compare the 'owner' with 'username'
        if (owner === username) {
          myProjects.push(project);
@@ -114,10 +111,10 @@ const getAllProjects = expressAsyncHandler(async (req, res) => {
   //console.log(myProjects)
   //console.log(myProjectsForTeams)
 
-  if (myProjects.length > 0) {
+  if (projects) {
     res.json(myProjects);
   } else {
-    res.status(404).json({ error: 'No matching projects found' });
+    res.status(500).json({ error: 'error not found projects' });
   }
 });
 
