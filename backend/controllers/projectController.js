@@ -67,7 +67,10 @@ const createProject = expressAsyncHandler(async (req, res) => {
 // @route GET /api/projects/
 // @access Public
 const getAllProjects = expressAsyncHandler(async (req, res) => {
-  const projects = await Project.find({});
+  const projects = await Project.find({}).populate({
+    path: 'members',
+    select: '_id name username',
+  });
  
   if (!req.user) {
     return res.status(401).json({ error: 'Authentication required' });
