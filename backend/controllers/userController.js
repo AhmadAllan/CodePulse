@@ -9,7 +9,7 @@ let OTPs
 
 const getTokenUserAuth = expressAsyncHandler(async(req, res, token) => {
   //const token = req.user.token;
-  getToken(token)
+  await getToken(token)
   //console.log(await getUsername(token))
 
 })
