@@ -37,6 +37,7 @@ const ProjectPage = () => {
 
   const handleProjectClick = (projectId) => {
     setSelectedProjectId(projectId);
+    console.log(projects);
   };
 
   const handleCreateProject = async (e) => {

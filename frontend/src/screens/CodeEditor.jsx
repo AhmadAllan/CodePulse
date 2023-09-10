@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useLocation } from "react-router-dom";
-import { AiOutlineFile, AiFillDelete, AiFillMessage, AiTwotoneMessage, AiOutlineMessage } from "react-icons/ai";
+import { AiOutlineFile, AiFillDelete, AiOutlineMessage } from "react-icons/ai";
 import { SiGithubactions, } from "react-icons/si";
 import { fetchFile } from "../services/githubService";
 import { fetchProjectById, updateProject } from "../services/projectService";
@@ -301,6 +301,7 @@ const CodeEditor = () => {
           </div>
           <ChatBox
             isOpen={isOpen}
+            projectId={location.state}
           />
         </>
       ) : (

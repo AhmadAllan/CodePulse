@@ -29,6 +29,15 @@ const verifyOtp = (otp) => {
   return false;
 };
 
+// @desc Get all users
+// @route GET /api/users
+// @access Private (or Public, depending on your use case)
+const getAllUsers = expressAsyncHandler(async (req, res) => {
+  const users = await User.find().select("name username email token");
+
+  res.status(200).json(users);
+});
+
 // @desc Auth user/set token
 // @route POST /api/users/auth
 // @access Public
@@ -224,5 +233,6 @@ export {
   getUserProfile,
   updateUserProfile,
   searchUsers,
-  getTokenUserAuth
+  getTokenUserAuth,
+  getAllUsers,
 };

@@ -100,7 +100,7 @@ const getAllProjects = expressAsyncHandler(async (req, res) => {
     }
     for(const member of project.members) {
         
-      const string1 = member.toString();
+      const string1 = member._id.toString();
       const string2 = authenticatedId.toString();
 
       if(string1 === string2) {
@@ -116,6 +116,8 @@ const getAllProjects = expressAsyncHandler(async (req, res) => {
 
   if (projects) {
     res.json(myProjects);
+    console.log(myProjects);
+    console.log(myProjectsForTeams);
   } else {
     res.status(500).json({ error: 'error not found projects' });
   }
