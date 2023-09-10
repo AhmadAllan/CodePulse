@@ -18,23 +18,39 @@ import {
 // @access Public
 const createProject = expressAsyncHandler(async (req, res) => {
   const { name, description, createdBy, members } = req.body;
+  console.log(name)
+  console.log(description)
+  console.log(createdBy)
+  console.log(members)
   try {
     // Check if the user doesn't have the same name for a project twice
     const existingProject = await Project.findOne({ name, createdBy });
     if (existingProject) {
       return res.status(400).json({ error: 'A project with the same name already exists for this user' });
     }
-
+    
     const project = await Project.create({
       name,
       description,
       createdBy,
-      members,
-    });
+      });
 
     // Call the createRepo function without passing res
     const repoResponse = await createRepo(name, description); // Pass name and description directly to createRepo
 
+    if (members && members.length > 0) {
+      for (const memberId of members) {
+        
+
+        if (!project.members.includes(memberId)) {
+          const collaborator = await User.findById(memberId)
+            project.members.push(memberId);
+            addCollaborator(name, collaborator.username)
+            
+            
+        }
+      }
+    }
     project.githubRepository = repoResponse.data.html_url;
     await project.save();
 
@@ -58,12 +74,13 @@ const getAllProjects = expressAsyncHandler(async (req, res) => {
 
   // Now, you can access the username of the authenticated user
   const authenticatedUsername = req.user.username;
+  const authenticatedId = req.user._id;
   
-  console.log(projects)
   const myProjects = []
+  const myProjectsForTeams = []
   for (const project of projects) {
     if (project.githubRepository) {
-      console.log(project.githubRepository)
+      
        const githubUrl = project.githubRepository;
        const urlParts = githubUrl.split('/'); // Split the URL by '/'
       // // The owner is the second part of the URL (index 1)
@@ -71,13 +88,27 @@ const getAllProjects = expressAsyncHandler(async (req, res) => {
 
       // // Assuming you have the 'username' available from somewhere
        const username = authenticatedUsername; // Replace with your actual 'username'
-
+       
       // // Compare the 'owner' with 'username'
        if (owner === username) {
          myProjects.push(project);
        }
     }
+    for(const member of project.members) {
+        
+      const string1 = member.toString();
+      const string2 = authenticatedId.toString();
+
+      if(string1 === string2) {
+        myProjectsForTeams.push(project)
+      }
+
+    }
   }
+  myProjects.push(...myProjectsForTeams);
+
+  //console.log(myProjects)
+  //console.log(myProjectsForTeams)
 
   if (projects) {
     res.json(myProjects);
@@ -93,16 +124,44 @@ const getAllProjects = expressAsyncHandler(async (req, res) => {
 const getProject = expressAsyncHandler(async (req, res) => {
   const projectId = req.params.id;
   const project = await Project.findById(projectId)
-    .populate('createdBy', 'name')
-    .populate('members', 'name'); // Populate the 'members' field with user information
-
+     .populate('createdBy', 'name')
+     .populate('members', 'name'); // Populate the 'members' field with user information
+      const githubUrl = project.githubRepository;
+      console.log('|')
+      console.log('|')
+      console.log('|')
+      console.log(project.createdBy.name)
+      console.log('|')
+      console.log('|')
+      const urlParts = githubUrl.split('/'); // Split the URL by '/'
+       // // The owner is the second part of the URL (index 1)
+        const owner = urlParts[3];
+        const user = await User.findOne({ username: owner });
+        // console.log(owner)
+        // console.log(user.username)
+        // console.log(user.token)
+    //  console.log(owner)
+    //  console.log(owner)
+    //  console.log(owner)
+    //  console.log(owner)
   if (project) {
     const {
       files,
       pushEventsWithCommits,
-      branches
-    } = await fetchFiles(project.name);
+      branches,
+      auther
+    } = await fetchFiles(project.name,user.username,user.token);
 
+    const createrCommit = await User.findOne({username:auther})
+    const Auther = createrCommit.name
+    console.log("*")
+    console.log("*")
+    console.log("*")
+    console.log(createrCommit.name)
+    console.log("*")
+
+    console.log("*")
+    console.log("*")
     if (typeof files === 'undefined' || files === '0') {
       // No content in the repository
 
@@ -123,6 +182,11 @@ const getProject = expressAsyncHandler(async (req, res) => {
         .filter(file => file.path)
         .map(file => file.path.split('/').pop());
       console.log(project.name);
+      console.log(req.user.name);
+      console.log(project.name);
+      console.log(Auther)
+      console.log(branches)
+      
       const projectInfo = {
         project: {
           id: project._id,
@@ -135,7 +199,8 @@ const getProject = expressAsyncHandler(async (req, res) => {
         },
         files: fileNames,
         events: pushEventsWithCommits,
-        branches
+        branches,
+        Auther
       };
 
       res.json({

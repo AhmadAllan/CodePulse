@@ -5,6 +5,7 @@ dotenv.config();
 
 let octokit
 let owner
+let auther
 async function getToken(token) {
   console.log("Hello")
   console.log(token)
@@ -19,7 +20,7 @@ async function getToken(token) {
 }
 
 async function getUsername(token){
-  const username = getToken(token)
+  const username =await getToken(token)
   return username
 
 }
@@ -91,8 +92,8 @@ async function getRepository(req, res) {
   //TODO:(req,res)
   async function createRepo(name, description) {
     try {
+
       
-  
       const response = await octokit.repos.createForAuthenticatedUser({
         name, // Name of the repository (required)
         description, // Description of the repository
@@ -100,8 +101,8 @@ async function getRepository(req, res) {
         private: true, 
         // TODO: Add other properties as needed
       });
-  
-      console.log('GitHub API response for createRepo:', response.data);
+
+      //console.log('GitHub API response for createRepo:', response.data);
       const readmeContent = '# ' + name + '\n' + description;
     
     const readmeResponse = await octokit.repos.createOrUpdateFileContents({
@@ -122,6 +123,8 @@ async function getRepository(req, res) {
   // url: http://localhost:8000/api/github/create-repo
   async function deleteRepo(repo) {
     //const { owner, repo } = req.params;
+
+
     try {
       
   
@@ -152,21 +155,22 @@ async function getRepository(req, res) {
     async function addCollaborator(repo, username) {
       //const { owner, repo, username } = req.body;
       
-    
+
       try {
         await octokit.repos.addCollaborator({
           owner,
           repo,
           username,
+          permission: "admin"
         });
     
         //res.json({ success: true });
         return {message: 'success full adding collaborater'}
       } catch (error) {
         console.log('not add coll')
-        //res.status(error.status || 500).json({
-          //message: error.message,
-        //});
+        res.status(error.status || 500).json({
+          message: error.message,
+        });
       }
     }
     
@@ -302,10 +306,21 @@ async function getRepository(req, res) {
     }
   }
 
-  async function fetchFiles(repo) {
+  async function fetchFiles(repo,userCreater,createrToken) {
     //const {owner, repo} = req.query
-    console.log(repo)
+    console.log(owner !== userCreater)
     console.log(owner)
+    console.log(userCreater)
+    console.log(createrToken)
+    auther = owner
+    console.log(auther)
+
+    if(owner !== userCreater) {
+      
+      await getToken(createrToken)
+      owner = userCreater
+    }
+    
     try {
       const response = await octokit.repos.getContent({
         owner,
@@ -320,6 +335,7 @@ async function getRepository(req, res) {
         repo,
       });
 
+      
       const files = response.data;
       const repoActivity = activityResponse.data;
       const pushEventsWithCommits = [];
@@ -349,6 +365,7 @@ async function getRepository(req, res) {
         files,
         pushEventsWithCommits,
         branches,
+        auther
       };
   
     } catch (error) {
