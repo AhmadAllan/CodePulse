@@ -35,8 +35,6 @@ const ProjectPage = () => {
     fetchData();
   }, []);
 
-
-
   const handleProjectClick = (projectId) => {
     setSelectedProjectId(projectId);
   };
@@ -80,19 +78,19 @@ const ProjectPage = () => {
 
   const openEditor = () => {
     navigate("/codeEditor", { state: selectedProjectId });
-  }
+  };
 
   const openVersionControl = () => {
     navigate("/versionControl", { state: selectedProjectId });
-  }
+  };
 
   const openReview = () => {
     navigate("/codeReview", { state: selectedProjectId });
-  }
+  };
 
   const openTasks = () => {
     navigate("/taskManagement", { state: selectedProjectId });
-  }
+  };
 
   const selectedProject = projects.find(
     (project) => project._id === selectedProjectId
@@ -163,57 +161,73 @@ const ProjectPage = () => {
                   onClick={() => handleProjectDelete(selectedProjectId)}
                   className="text-red-500 hover:text-red-600 focus:outline-none"
                 >
-                  Delete
+                  {selectedProject.createdBy === userInfo._id ? "Delete" : "Remove"}
                 </button>
               </div>
             ) : (
-              <h1 className="text-3xl font-bold text-gray-800 mb-6">
-                Select a Project
-              </h1>
+              <div className="flex flex-col items-center justify-center h-full">
+                <h1 className="text-3xl font-bold text-gray-800 mb-6">
+                  Select a Project
+                </h1>
+              </div>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-6">
-            <div className="bg-blue-500 text-white rounded-lg p-4 flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold">Code Editor</h2>
-                <p className="text-sm">Write and edit code for the project.</p>
+          {selectedProject && (
+            <div className="grid grid-cols-2 gap-6">
+              <div className="bg-blue-500 text-white rounded-lg p-4 flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold">Code Editor</h2>
+                  <p className="text-sm">
+                    Write and edit code for the project.
+                  </p>
+                </div>
+                <button
+                  onClick={openEditor}
+                  className="px-4 py-2 bg-blue-700 rounded-lg"
+                >
+                  Open Code Editor
+                </button>
               </div>
-              <button onClick={openEditor} className="px-4 py-2 bg-blue-700 rounded-lg">
-                Open Code Editor
-              </button>
-            </div>
-            <div className="bg-green-500 text-white rounded-lg p-4 flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold">Version Control</h2>
-                <p className="text-sm">
-                  Manage project versions and collaborate on code.
-                </p>
+              <div className="bg-green-500 text-white rounded-lg p-4 flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold">Version Control</h2>
+                  <p className="text-sm">
+                    Manage project versions and collaborate on code.
+                  </p>
+                </div>
+                <button
+                  onClick={openVersionControl}
+                  className="px-4 py-2 bg-green-700 rounded-lg"
+                >
+                  Open Version Control
+                </button>
               </div>
-              <button onClick={openVersionControl} className="px-4 py-2 bg-green-700 rounded-lg">
-                Open Version Control
-              </button>
-            </div>
-            <div className="bg-yellow-500 text-white rounded-lg p-4 flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold">Review</h2>
-                <p className="text-sm">
-                  Review the comment on the project.
-                </p>
+              <div className="bg-yellow-500 text-white rounded-lg p-4 flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold">Review</h2>
+                  <p className="text-sm">Review the comment on the project.</p>
+                </div>
+                <button
+                  onClick={openReview}
+                  className="px-4 py-2 bg-yellow-700 rounded-lg"
+                >
+                  Open Code Review
+                </button>
               </div>
-              <button onClick={openReview} className="px-4 py-2 bg-yellow-700 rounded-lg">
-                Open Code Review
-              </button>
-            </div>
-            <div className="bg-purple-500 text-white rounded-lg p-4 flex items-center justify-between">
-              <div>
-                <h2 className="text-xl font-bold">Tasks</h2>
-                <p className="text-sm">Manage and track project tasks.</p>
+              <div className="bg-purple-500 text-white rounded-lg p-4 flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-bold">Tasks</h2>
+                  <p className="text-sm">Manage and track project tasks.</p>
+                </div>
+                <button
+                  onClick={openTasks}
+                  className="px-4 py-2 bg-purple-700 rounded-lg"
+                >
+                  Open Tasks Management
+                </button>
               </div>
-              <button onClick={openTasks} className="px-4 py-2 bg-purple-700 rounded-lg">
-                Open Tasks Management
-              </button>
             </div>
-          </div>
+          )}
         </div>
       </div>
       {/* Project creating model */}

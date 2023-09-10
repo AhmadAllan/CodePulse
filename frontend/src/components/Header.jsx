@@ -55,7 +55,7 @@ const Header = () => {
                 <Link
                   to="/projects"
                   className={`text-gray-400 ${
-                    isActive("/projects")
+                    isActive("/projects" || "/codeEditor" || "/versionControl" || "/codeReview" || "/taskManagement")
                       ? "text-white border-b-2 border-white"
                       : ""
                   }`}
