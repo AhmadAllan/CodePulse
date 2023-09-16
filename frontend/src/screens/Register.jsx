@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -19,14 +19,12 @@ const Register = () => {
   const [edu, setEdu] = useState("");
   const [token, setToken] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
+  const [showTokenLink, setShowTokenLink] = useState(true);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { userInfo } = useSelector((state) => state.auth);
-
   const [register, { isLoading }] = useRegisterMutation();
-
 
   const clearError = (field) => {
     // Create a copy of the current fieldErrors state
@@ -108,7 +106,7 @@ const Register = () => {
     }
     return isEmailValid;
   };
-  
+
   const submitHandler = async (e) => {
     e.preventDefault();
     const errors = {};
@@ -174,6 +172,10 @@ const Register = () => {
         toast.error(err?.data?.message || err.error);
       }
     }
+  };
+
+  const toggleTokenInput = () => {
+    setShowTokenLink(!showTokenLink);
   };
 
   const countries = ["USA", "Canada", "UK", "Germany", "Australia"];
@@ -290,19 +292,38 @@ const Register = () => {
 
         {/* GitHub Token */}
         <div className="mb-4">
-          <label className="block mb-1">GitHub Token</label>
-
-          <input
-            type="text"
-            className={`w-full px-4 py-2 border ${
-              fieldErrors.token ? "border-red-500" : "border-gray-300"
-            } rounded`}
-            placeholder="Enter Token ex: ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-            value={token}
-            onChange={(e) => handleInputChange(e, "token")}
-          />
-          {fieldErrors.token && (
-            <p className="text-red-500 text-sm">{fieldErrors.token}</p>
+          {showTokenLink ? (
+            <div>
+              <p>
+              Create GitHub Token
+              </p>
+              <br />
+              <a
+                className="p-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 cursor-pointer"
+                href="https://github.com/settings/tokens/new"
+                target="_blank"
+                onClick={toggleTokenInput} rel="noreferrer"
+              >
+                Enter GitHub Token
+              </a>
+            </div>
+          ) : (
+            // Display the input field if showTokenLink is false
+            <div>
+              <label className="block mb-1">GitHub Token</label>
+              <input
+                type="text"
+                className={`w-full px-4 py-2 border ${
+                  fieldErrors.token ? "border-red-500" : "border-gray-300"
+                } rounded`}
+                placeholder="Enter Token ex: ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+                value={token}
+                onChange={(e) => handleInputChange(e, "token")}
+              />
+              {fieldErrors.token && (
+                <p className="text-red-500 text-sm">{fieldErrors.token}</p>
+              )}
+            </div>
           )}
         </div>
 

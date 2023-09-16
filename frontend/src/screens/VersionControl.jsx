@@ -6,7 +6,6 @@ import { fetchProjectById } from '../services/projectService';
 import Loader from '../components/Loader';
 
 const VersionControl = () => {
-  const [expandedPush, setExpandedPush] = useState(null);
   const [project, setProject] = useState(null);
 
   const location = useLocation();
@@ -24,8 +23,13 @@ const VersionControl = () => {
     fetchData();
   }, [location.state]);
 
-  const handlePushToggle = (pushId) => {
-    setExpandedPush((prevPush) => (prevPush === pushId ? null : pushId));
+  const [expandedEvents, setExpandedEvents] = useState([]);
+
+  const handlePushToggle = (eventIndex) => {
+    setExpandedEvents((prevExpandedEvents) => ({
+      ...prevExpandedEvents,
+      [eventIndex]: !prevExpandedEvents[eventIndex],
+    }));
   };
 
   return (
@@ -50,32 +54,32 @@ const VersionControl = () => {
               </div>
               <div>
                 <h3 className="text-lg font-semibold mb-2">Events</h3>
-                {project.events.map((event) => (
-                  <div key={event.eventType} className="mb-4">
-                    <div
-                      className="border rounded-lg p-4 cursor-pointer"
-                      onClick={() => handlePushToggle(event.eventType)}
-                    >
-                      <span className="text-blue-500 font-semibold">{event.eventType}</span>
-                      <FontAwesomeIcon
-                        icon={faChevronDown}
-                        className={`ml-2 ${
-                          expandedPush === event.eventType ? 'transform rotate-180' : ''
-                        }`}
-                      />
-                      {expandedPush === event.eventType && (
-                        <div className="pl-4 pt-2">
-                          <p className="text-gray-600">
-                            Author: {event.actor}<br />
-                            Date: {event.eventTime}<br />
-                            File: test<br />
-                            Commit: {event.eventMessage}
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
+                {project.events.map((event, index) => (
+  <div key={index} className="mb-4">
+    <div
+      className="border rounded-lg p-4 cursor-pointer"
+      onClick={() => handlePushToggle(index)}
+    >
+      <span className="text-blue-500 font-semibold">{event.eventType}</span>
+      <FontAwesomeIcon
+        icon={faChevronDown}
+        className={`ml-2 ${
+          expandedEvents[index] ? 'transform rotate-180' : ''
+        }`}
+      />
+      {expandedEvents[index] && (
+        <div className="pl-4 pt-2">
+          <p className="text-gray-600">
+            Author: {event.actor}<br />
+            Date: {event.eventTime}<br />
+            File: test<br />
+            Commit: {event.eventMessage}
+          </p>
+        </div>
+      )}
+    </div>
+  </div>
+))}
               </div>
             </div>
           </>

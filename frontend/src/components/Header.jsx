@@ -20,7 +20,8 @@ const Header = () => {
   const [logoutApiCall] = useLogoutMutation();
 
   // Function to check if a path is active
-  const isActive = (path) => path === location.pathname;
+  const isActive = (...paths) => paths.some((path) => location.pathname.startsWith(path));
+
 
   const logoutHandler = async () => {
     try {
@@ -52,17 +53,17 @@ const Header = () => {
                 </Link>
               </li>
               <li>
-                <Link
-                  to="/projects"
-                  className={`text-gray-400 ${
-                    isActive("/projects" || "/codeEditor" || "/versionControl" || "/codeReview" || "/taskManagement")
-                      ? "text-white border-b-2 border-white"
-                      : ""
-                  }`}
-                >
-                  <span>Projects</span>
-                </Link>
-              </li>
+  <Link
+    to="/projects"
+    className={`text-gray-400 ${
+      isActive("/projects", "/projects/codeEditor", "/projects/versionControl", "/projects/codeReview", "/projects/taskManagement")
+        ? "text-white border-b-2 border-white"
+        : ""
+    }`}
+  >
+    <span>Projects</span>
+  </Link>
+</li>
               <li>
                 <Link
                   to="/chat"
@@ -98,7 +99,7 @@ const Header = () => {
               >
                 <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <div className="py-1">
-                  <Menu.Item>
+                    <Menu.Item>
                       {({ active }) => (
                         <Link
                           to="/profile"
@@ -128,7 +129,6 @@ const Header = () => {
                         </Link>
                       )}
                     </Menu.Item>
-                    
                   </div>
                 </Menu.Items>
               </Transition>

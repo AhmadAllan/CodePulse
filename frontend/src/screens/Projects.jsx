@@ -7,6 +7,7 @@ import {
   deleteProject,
 } from "../services/projectService";
 import UserSearch from "../components/UserSearch";
+import Loader from "../components/Loader";
 
 const ProjectPage = () => {
   const navigate = useNavigate();
@@ -21,6 +22,8 @@ const ProjectPage = () => {
   const [members, setMembers] = useState([]);
   const [projects, setProjects] = useState([]);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
 
   useEffect(() => {
     async function fetchData() {
@@ -42,6 +45,8 @@ const ProjectPage = () => {
 
   const handleCreateProject = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Start loading
+  
     try {
       const response = await createProject({
         name,
@@ -57,7 +62,8 @@ const ProjectPage = () => {
     } catch (error) {
       console.error("Error creating project:", error);
     }
-    console.log(projects);
+  
+    setIsLoading(false); // Done loading
   };
 
   const handleProjectDelete = async (projectId) => {
@@ -79,19 +85,19 @@ const ProjectPage = () => {
   };
 
   const openEditor = () => {
-    navigate("/codeEditor", { state: selectedProjectId });
+    navigate("/projects/codeEditor", { state: selectedProjectId });
   };
 
   const openVersionControl = () => {
-    navigate("/versionControl", { state: selectedProjectId });
+    navigate("/projects/versionControl", { state: selectedProjectId });
   };
 
   const openReview = () => {
-    navigate("/codeReview", { state: selectedProjectId });
+    navigate("/projects/codeReview", { state: selectedProjectId });
   };
 
   const openTasks = () => {
-    navigate("/taskManagement", { state: selectedProjectId });
+    navigate("/projects/taskManagement", { state: selectedProjectId });
   };
 
   const selectedProject = projects.find(
@@ -99,7 +105,7 @@ const ProjectPage = () => {
   );
 
   return (
-    <div className="flex bg-gray-100">
+    <div className={isLoading ? "flex bg-gray-100 blur-sm" : "flex bg-gray-100"}>
       <div className="w-1/4 bg-white rounded-lg shadow-md p-6">
         <h2 className="text-xl font-bold mb-4">My Projects</h2>
         <div className="mb-6">
@@ -307,6 +313,7 @@ const ProjectPage = () => {
           </div>
         </div>
       )}
+      {isLoading && <Loader />}
     </div>
   );
 };

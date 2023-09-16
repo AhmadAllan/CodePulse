@@ -45,11 +45,11 @@ const router = createBrowserRouter(
       <Route path="" element={<PrivateRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/projects" element={<Projects />} />
-        <Route path="/codeEditor" element={<CodeEditor />} />
-        <Route path="/versionControl" element={<VersionControl />} />
+        <Route path="/projects/codeEditor" element={<CodeEditor />} />
+        <Route path="/projects/versionControl" element={<VersionControl />} />
         <Route path="/chat" element={<ChatPage />} />
-        <Route path="/codeReview" element={<CodeReview />} />
-        <Route path="/taskManagement" element={<TaskManagement />} />
+        <Route path="/projects/codeReview" element={<CodeReview />} />
+        <Route path="/projects/taskManagement" element={<TaskManagement />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/user-search" element={<UserSearch />} />
         <Route path="/chatBox" element={<ChatBox />} />

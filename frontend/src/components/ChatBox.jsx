@@ -102,7 +102,7 @@ const ChatBox = ({ isOpen, projectId }) => {
             ) : (
               <>
                 {/* User list */}
-                {filtered.map((user) => (
+                {users.map((user) => (
                   <div
                     key={user.id}
                     onClick={toggleChat}
